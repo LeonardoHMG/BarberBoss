@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BarberBoss.Api/BarberBoss.Api.csproj" />
+    <Project Path="src/BarberBoss.Application/BarberBoss.Application.csproj" />
+    <Project Path="src/BarberBoss.Communication/BarberBoss.Communication.csproj" />
+    <Project Path="src/BarberBoss.Domain/BarberBoss.Domain.csproj" />
+    <Project Path="src/BarberBoss.Exception/BarberBoss.Exception.csproj" />
+    <Project Path="src/BarberBoss.Infrastructure/BarberBoss.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>
