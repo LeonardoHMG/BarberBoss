@@ -1,5 +1,6 @@
 ﻿using BarberBoss.Communication.Enums;
 using BarberBoss.Communication.Requests;
+using BarberBoss.Exception;
 using FluentValidation;
 
 namespace BarberBoss.Application.UseCases.Billings;
@@ -8,37 +9,37 @@ public class BillingValidator : AbstractValidator<RequestBillingJson>
     public BillingValidator()
     {
         RuleFor(billing => billing.Date)
-            .NotEmpty().WithMessage("Billing date is required.")
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("Billing date cannot be in the future.")
-            .GreaterThan(DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1))).WithMessage("Billing cannot be recorded more than one year in the past.");
+            .NotEmpty().WithMessage(ResourceErrorMessages.DATE_REQUIRED)
+            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage(ResourceErrorMessages.DATE_FUTURE)
+            .GreaterThan(DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-1))).WithMessage(ResourceErrorMessages.DATE_TOO_OLD);
 
         RuleFor(billing => billing.BarberName)
-            .NotEmpty().WithMessage("Barber's name is required.")
-            .Length(2, 80).WithMessage("Barber's name must be between 2 and 80 characters.");
+            .NotEmpty().WithMessage(ResourceErrorMessages.BARBER_NAME_REQUIRED)
+            .Length(2, 80).WithMessage(ResourceErrorMessages.BARBER_NAME_LENGTH);
 
         RuleFor(billing => billing.ClientName)
-            .NotEmpty().WithMessage("Client's name is required.")
-            .Length(2, 120).WithMessage("Client's name must be between 2 and 120 characters.");
+            .NotEmpty().WithMessage(ResourceErrorMessages.CLIENT_NAME_REQUIRED)
+            .Length(2, 120).WithMessage(ResourceErrorMessages.CLIENT_NAME_LENGTH);
 
         RuleFor(billing => billing.ServiceName)
-            .NotEmpty().WithMessage("Service name is required.")
-            .Length(2, 120).WithMessage("Service name must be between 2 and 120 characters.");
+            .NotEmpty().WithMessage(ResourceErrorMessages.SERVICE_NAME_REQUIRED)
+            .Length(2, 120).WithMessage(ResourceErrorMessages.SERVICE_NAME_LENGTH);
 
         RuleFor(billing => billing.Amount)
-            .NotNull().WithMessage("Amount is required.")
-            .GreaterThanOrEqualTo(0).WithMessage("Amount cannot be negative.");
+            .NotNull().WithMessage(ResourceErrorMessages.AMOUNT_REQUIRED)
+            .GreaterThanOrEqualTo(0).WithMessage(ResourceErrorMessages.AMOUNT_NEGATIVE);
 
         RuleFor(billing => billing.Amount)
-            .Equal(0).WithMessage("For 'Canceled' status, the amount must be 0.00.")
+            .Equal(0).WithMessage(ResourceErrorMessages.AMOUNT_MUST_BE_ZERO)
             .When(billing => billing.Status == Status.Canceled);
 
         RuleFor(billing => billing.PaymentMethod)
-            .IsInEnum().WithMessage("Please select a valid payment method (Card, Cash, Pix, or Other).");
+            .IsInEnum().WithMessage(ResourceErrorMessages.PAYMENT_METHOD_INVALID);
 
         RuleFor(billing => billing.Status)
-            .IsInEnum().WithMessage("Status must be either 'Paid' or 'Canceled'.");
+            .IsInEnum().WithMessage(ResourceErrorMessages.STATUS_INVALID);
 
         RuleFor(billing => billing.Notes)
-            .MaximumLength(500).WithMessage("Notes cannot exceed 500 characters.");
+            .MaximumLength(500).WithMessage(ResourceErrorMessages.NOTES_LENGTH);
     }
 }
