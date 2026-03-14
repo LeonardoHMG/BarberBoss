@@ -7,8 +7,22 @@ public class RegisterBillingUseCase
 {
     public ResponseRegisterBillingJson Execute(RequestBillingJson request)
     {
-        //TO DO VALIDATIONS
+        Validate(request);
 
         return new ResponseRegisterBillingJson();
+    }
+
+    private void Validate(RequestBillingJson request)
+    {
+        var validator = new BillingValidator();
+
+        var result = validator.Validate(request);   
+
+        if (result.IsValid ==  false)
+        {
+            var errorMessages = result.Errors.Select(f => f.ErrorMessage).ToList();
+
+            throw new ArgumentException();
+        }
     }
 }

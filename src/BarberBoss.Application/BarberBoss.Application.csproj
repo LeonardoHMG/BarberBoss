@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BarberBoss.Communication\BarberBoss.Communication.csproj" />
     <ProjectReference Include="..\BarberBoss.Domain\BarberBoss.Domain.csproj" />
     <ProjectReference Include="..\BarberBoss.Exception\BarberBoss.Exception.csproj" />
