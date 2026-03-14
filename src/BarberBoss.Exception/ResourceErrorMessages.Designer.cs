@@ -61,7 +61,7 @@ namespace BarberBoss.Exception {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to For &apos;Canceled&apos; status, the amount must be 0.00..
+        ///   Looks up a localized string similar to For Canceled status, the amount must be 0.00..
         /// </summary>
         public static string AMOUNT_MUST_BE_ZERO {
             get {
@@ -160,7 +160,7 @@ namespace BarberBoss.Exception {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select a valid payment method (Card, Cash, Pix, or Other)..
+        ///   Looks up a localized string similar to Choose a valid payment method (Card, Cash, Pix, or Other)..
         /// </summary>
         public static string PAYMENT_METHOD_INVALID {
             get {
@@ -187,7 +187,7 @@ namespace BarberBoss.Exception {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Status must be either &apos;Paid&apos; or &apos;Canceled&apos;..
+        ///   Looks up a localized string similar to Status must be either Paid or Canceled..
         /// </summary>
         public static string STATUS_INVALID {
             get {

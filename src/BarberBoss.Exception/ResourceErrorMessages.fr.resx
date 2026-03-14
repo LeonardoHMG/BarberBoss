@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AMOUNT_REQUIRED" xml:space="preserve">
-    <value>Amount is required.</value>
+    <value>Un montant est requis.</value>
   </data>
   <data name="BARBER_NAME_LENGTH" xml:space="preserve">
-    <value>Barber's name must be between 2 and 80 characters.</value>
+    <value>Le nom du coiffeur doit comporter entre 2 et 80 caractères.</value>
   </data>
   <data name="BARBER_NAME_REQUIRED" xml:space="preserve">
-    <value>Barber's name is required.</value>
+    <value>Le nom du coiffeur est requis.</value>
   </data>
   <data name="CLIENT_NAME_LENGTH" xml:space="preserve">
-    <value>Client's name must be between 2 and 120 characters.</value>
+    <value>Le nom du client doit comporter entre 2 et 120 caractères.</value>
   </data>
   <data name="CLIENT_NAME_REQUIRED" xml:space="preserve">
-    <value>Client's name is required.</value>
+    <value>Le nom du client est requis.</value>
   </data>
   <data name="DATE_FUTURE" xml:space="preserve">
-    <value>Billing date cannot be in the future.</value>
+    <value>La date de facturation ne peut pas être future.</value>
   </data>
   <data name="DATE_REQUIRED" xml:space="preserve">
-    <value>Billing date is required.</value>
+    <value>La date de facturation est requise.</value>
   </data>
   <data name="DATE_TOO_OLD" xml:space="preserve">
-    <value>Billing cannot be recorded more than one year in the past.</value>
+    <value>La facturation ne peut pas remonter à plus d'un an.</value>
   </data>
   <data name="SERVICE_NAME_LENGTH" xml:space="preserve">
-    <value>Service name must be between 2 and 120 characters.</value>
+    <value>Le nom du service doit comporter entre 2 et 120 caractères.</value>
   </data>
   <data name="SERVICE_NAME_REQUIRED" xml:space="preserve">
-    <value>Service name is required.</value>
+    <value>Le nom du service est obligatoire.</value>
   </data>
   <data name="UNKNOWN_ERROR" xml:space="preserve">
-    <value>Unknown error</value>
+    <value>Erreur inconnue</value>
   </data>
   <data name="AMOUNT_NEGATIVE" xml:space="preserve">
-    <value>Amount cannot be negative.</value>
+    <value>Le montant ne peut pas être négatif.</value>
   </data>
   <data name="AMOUNT_MUST_BE_ZERO" xml:space="preserve">
-    <value>For Canceled status, the amount must be 0.00.</value>
+    <value>Pour un statut Annulé, le montant doit être de 0,00.</value>
   </data>
   <data name="PAYMENT_METHOD_INVALID" xml:space="preserve">
-    <value>Choose a valid payment method (Card, Cash, Pix, or Other).</value>
+    <value>Choisissez un mode de paiement valide (Carte, Espèces, Pix ou Autre).</value>
   </data>
   <data name="STATUS_INVALID" xml:space="preserve">
-    <value>Status must be either Paid or Canceled.</value>
+    <value>Le statut doit être soit Payé, soit Annulé.</value>
   </data>
   <data name="NOTES_LENGTH" xml:space="preserve">
-    <value>Notes cannot exceed 500 characters.</value>
+    <value>Les notes ne peuvent pas dépasser 500 caractères.</value>
   </data>
 </root>
