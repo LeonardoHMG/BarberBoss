@@ -26,12 +26,15 @@ public class BillingValidator : AbstractValidator<RequestBillingJson>
             .Length(2, 120).WithMessage(ResourceErrorMessages.SERVICE_NAME_LENGTH);
 
         RuleFor(billing => billing.Amount)
-            .NotNull().WithMessage(ResourceErrorMessages.AMOUNT_REQUIRED)
             .GreaterThanOrEqualTo(0).WithMessage(ResourceErrorMessages.AMOUNT_NEGATIVE);
 
         RuleFor(billing => billing.Amount)
             .Equal(0).WithMessage(ResourceErrorMessages.AMOUNT_MUST_BE_ZERO)
             .When(billing => billing.Status == Status.Canceled);
+        
+        RuleFor(billing => billing.Amount)
+            .GreaterThan(0).WithMessage(ResourceErrorMessages.AMOUNT_REQUIRED)
+            .When(billing => billing.Status != Status.Canceled);
 
         RuleFor(billing => billing.PaymentMethod)
             .IsInEnum().WithMessage(ResourceErrorMessages.PAYMENT_METHOD_INVALID);
