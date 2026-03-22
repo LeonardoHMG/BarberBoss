@@ -15,8 +15,8 @@ public class RequestRegisterBillingJsonBuilder
             .RuleFor(r => r.BarberName, faker => faker.PickRandom(_barbers))
             .RuleFor(r => r.ClientName, faker => faker.Person.FullName)
             .RuleFor(r => r.ServiceName, faker => faker.PickRandom(_services))
-            .RuleFor(r => r.Status, f => f.PickRandom<Status>())
-            .RuleFor(r => r.Amount, (f, r) => r.Status == Status.Canceled
+            .RuleFor(r => r.Status, f => f.PickRandom<PaymentStatus>())
+            .RuleFor(r => r.Amount, (f, r) => r.Status == PaymentStatus.Canceled
                 ? 0
                 : f.Random.Decimal(1, 1000))
             .RuleFor(r => r.PaymentMethod, faker => faker.PickRandom<PaymentMethod>())

@@ -119,7 +119,7 @@ public class RegisterBillingValidatorTests
     {
         var validator = new BillingValidator();
         var request = RequestRegisterBillingJsonBuilder.Build();
-        request.Status = Status.Paid; 
+        request.Status = PaymentStatus.Paid; 
         request.Amount = 0;
 
         var result = validator.Validate(request);
@@ -133,7 +133,7 @@ public class RegisterBillingValidatorTests
     {
         var validator = new BillingValidator();
         var request = RequestRegisterBillingJsonBuilder.Build();
-        request.Status = Status.Canceled;
+        request.Status = PaymentStatus.Canceled;
         request.Amount = 50; 
 
         var result = validator.Validate(request);
@@ -164,7 +164,7 @@ public class RegisterBillingValidatorTests
     {
         var validator = new BillingValidator();
         var request = RequestRegisterBillingJsonBuilder.Build();
-        request.Status = (Status)99;
+        request.Status = (PaymentStatus)99;
 
         var result = validator.Validate(request);
 
