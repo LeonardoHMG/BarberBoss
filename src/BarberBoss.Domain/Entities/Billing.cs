@@ -11,6 +11,7 @@ public class Billing
     public decimal Amount { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public PaymentStatus Status { get; set; }
+    public string? Notes { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
