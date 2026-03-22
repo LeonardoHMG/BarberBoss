@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace BarberBoss.Infrastructure.DataAccess;
-public class BarberBossDbContext: DbContext
+internal class BarberBossDbContext: DbContext
 {
     public DbSet<Billing> Billings { get; set; }
 
