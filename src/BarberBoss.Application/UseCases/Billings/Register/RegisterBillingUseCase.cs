@@ -18,7 +18,7 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
         _unitOfWork = unitOfWork;
     }
 
-    public ResponseRegisterBillingJson Execute(RequestBillingJson request)
+    public async Task<ResponseRegisterBillingJson> Execute(RequestBillingJson request)
     {
         Validate(request);
 
@@ -36,10 +36,9 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
         };
+        await _repository.Add(entity);
 
-        _repository.Add(entity);
-
-        _unitOfWork.Commit();
+        await _unitOfWork.Commit();
 
         return new ResponseRegisterBillingJson();
     }

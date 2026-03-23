@@ -9,11 +9,11 @@ namespace BarberBoss.Api.Controllers;
 public class BillingsController : ControllerBase
 {
     [HttpPost]
-    public IActionResult Register (
+    public async Task<IActionResult> Register (
         [FromServices] IRegisterBillingUseCase useCase,
         [FromBody] RequestBillingJson request)
     {
-        var response = useCase.Execute(request);
+        var response = await useCase.Execute(request);
 
         return Created(string.Empty, response);
     }

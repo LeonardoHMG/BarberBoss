@@ -12,8 +12,8 @@ internal class BillingsRepository : IBillingsRepository
         _dbContext = dbContext;
     }
 
-    public void Add(Billing billing)
+    public async Task Add(Billing billing)
     {
-       _dbContext.Billings.Add(billing);
+        await _dbContext.Billings.AddAsync(billing);
     }
 }
