@@ -1,6 +1,7 @@
 ﻿using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Entities;
+using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.Billings;
 using BarberBoss.Exception.ExceptionsBase;
 
@@ -9,10 +10,12 @@ namespace BarberBoss.Application.UseCases.Billings.Register;
 public class RegisterBillingUseCase : IRegisterBillingUseCase
 {
     private readonly IBillingsRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public RegisterBillingUseCase(IBillingsRepository repository)
+    public RegisterBillingUseCase(IBillingsRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public ResponseRegisterBillingJson Execute(RequestBillingJson request)
@@ -35,6 +38,8 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
         };
 
         _repository.Add(entity);
+
+        _unitOfWork.Commit();
 
         return new ResponseRegisterBillingJson();
     }

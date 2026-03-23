@@ -15,7 +15,5 @@ internal class BillingsRepository : IBillingsRepository
     public void Add(Billing billing)
     {
        _dbContext.Billings.Add(billing);
-
-        _dbContext.SaveChanges();
     }
 }
