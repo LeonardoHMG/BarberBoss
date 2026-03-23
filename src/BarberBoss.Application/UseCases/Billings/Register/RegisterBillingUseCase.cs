@@ -1,12 +1,20 @@
 ﻿using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Entities;
+using BarberBoss.Domain.Repositories.Billings;
 using BarberBoss.Exception.ExceptionsBase;
 
 namespace BarberBoss.Application.UseCases.Billings.Register;
 
-public class RegisterBillingUseCase
+public class RegisterBillingUseCase : IRegisterBillingUseCase
 {
+    private readonly IBillingsRepository _repository;
+
+    public RegisterBillingUseCase(IBillingsRepository repository)
+    {
+        _repository = repository;
+    }
+
     public ResponseRegisterBillingJson Execute(RequestBillingJson request)
     {
         Validate(request);
@@ -25,6 +33,8 @@ public class RegisterBillingUseCase
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
         };
+
+        _repository.Add(entity);
 
         return new ResponseRegisterBillingJson();
     }
