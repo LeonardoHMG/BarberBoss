@@ -5,12 +5,17 @@ namespace BarberBoss.Infrastructure.DataAccess.Repositories;
 
 internal class BillingsRepository : IBillingsRepository
 {
+    private readonly BarberBossDbContext _dbContext;
+
+    public BillingsRepository(BarberBossDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public void Add(Billing billing)
     {
-        var dbContext = new BarberBossDbContext();
+       _dbContext.Billings.Add(billing);
 
-        dbContext.Billings.Add(billing);
-
-        dbContext.SaveChanges();
+        _dbContext.SaveChanges();
     }
 }
