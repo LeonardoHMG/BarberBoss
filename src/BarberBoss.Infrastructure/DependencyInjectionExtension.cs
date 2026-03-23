@@ -1,14 +1,16 @@
 ﻿using BarberBoss.Domain.Repositories.Billings;
 using BarberBoss.Infrastructure.DataAccess;
 using BarberBoss.Infrastructure.DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BarberBoss.Infrastructure;
 public static class DependencyInjectionExtension
 {
-    public static void AddInfrastructure(this IServiceCollection services)
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        AddDbContext(services);
+        AddDbContext(services, configuration);
         AddRepositories(services);
     }
 
@@ -17,8 +19,15 @@ public static class DependencyInjectionExtension
         services.AddScoped<IBillingsRepository, BillingsRepository>();
     }
 
-    private static void AddDbContext(IServiceCollection services)
+    private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<BarberBossDbContext>();
+
+        var connectionString = configuration.GetConnectionString("Connection");
+
+        var version = new Version(8, 0, 45);
+        var serverVersion = new MySqlServerVersion(version);
+
+        services.AddDbContext<BarberBossDbContext>(config => config.UseMySql(connectionString, serverVersion));
     }
 }
