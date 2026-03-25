@@ -1,4 +1,5 @@
-﻿using BarberBoss.Communication.Requests;
+﻿using AutoMapper;
+using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Entities;
 using BarberBoss.Domain.Repositories;
@@ -11,36 +12,26 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
 {
     private readonly IBillingsRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public RegisterBillingUseCase(IBillingsRepository repository, IUnitOfWork unitOfWork)
+    public RegisterBillingUseCase(IBillingsRepository repository, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<ResponseRegisterBillingJson> Execute(RequestBillingJson request)
     {
         Validate(request);
 
-        var entity = new Billing
-        {
-            Id = Guid.NewGuid(),
-            Date = request.Date,
-            BarberName = request.BarberName,
-            ClientName = request.ClientName,
-            ServiceName = request.ServiceName,
-            Amount = request.Amount,    
-            PaymentMethod = (Domain.Enums.PaymentMethod)request.PaymentMethod,
-            Status = (Domain.Enums.PaymentStatus)request.Status,
-            Notes = request.Notes,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-        };
+        var entity = _mapper.Map<Billing>(request);
+
         await _repository.Add(entity);
 
         await _unitOfWork.Commit();
 
-        return new ResponseRegisterBillingJson();
+        return _mapper.Map<ResponseRegisterBillingJson>(entity);
     }
 
     private void Validate(RequestBillingJson request)

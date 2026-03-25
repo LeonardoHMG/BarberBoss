@@ -3,7 +3,7 @@
 namespace BarberBoss.Domain.Entities;
 public class Billing
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; private set; }
     public DateOnly Date { get; set; }
     public string BarberName { get; set; } = string.Empty;
     public string ClientName { get; set; } = string.Empty;
@@ -12,6 +12,33 @@ public class Billing
     public PaymentMethod PaymentMethod { get; set; }
     public PaymentStatus Status { get; set; }
     public string? Notes { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; set; }
+
+    protected Billing() { }
+
+    public Billing(
+        DateOnly date,
+        string barberName,
+        string clientName,
+        string serviceName,
+        decimal amount,
+        PaymentMethod paymentMethod,
+        PaymentStatus status,
+        string? notes = null)
+    {
+        Id = Guid.NewGuid();
+        Date = date;
+        BarberName = barberName;
+        ClientName = clientName;
+        ServiceName = serviceName;
+        Amount = amount;
+        PaymentMethod = paymentMethod;
+        Status = status;
+        Notes = notes;
+
+        var now = DateTime.UtcNow;
+        CreatedAt = now;
+        UpdatedAt = now;
+    }
 }

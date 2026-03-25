@@ -1,5 +1,6 @@
 ﻿using BarberBoss.Application.UseCases.Billings.Register;
 using BarberBoss.Communication.Requests;
+using BarberBoss.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BarberBoss.Api.Controllers;
@@ -9,6 +10,8 @@ namespace BarberBoss.Api.Controllers;
 public class BillingsController : ControllerBase
 {
     [HttpPost]
+    [ProducesResponseType(typeof(ResponseRegisterBillingJson), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register (
         [FromServices] IRegisterBillingUseCase useCase,
         [FromBody] RequestBillingJson request)
