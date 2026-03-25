@@ -23,5 +23,6 @@ public class AutoMapping: Profile
     private void EntityToResponse()
     {
         CreateMap<Billing, ResponseRegisterBillingJson>();
+        CreateMap<Billing, ResponseShortBillingJson>();
     }
 }
