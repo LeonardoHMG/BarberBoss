@@ -18,8 +18,37 @@ internal class BillingsRepository : IBillingsRepository
         await _dbContext.Billings.AddAsync(billing);
     }
 
-    public async Task<List<Billing>> GetAll()
+    public async Task<(List<Billing> Items, int TotalCount)> GetAll(BillingFilter filter)
     {
-        return await _dbContext.Billings.ToListAsync();
+        var query = _dbContext.Billings.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filter.BarberName))
+            query = query.Where(b => b.BarberName.Contains(filter.BarberName));
+
+        if (!string.IsNullOrWhiteSpace(filter.ServiceName))
+            query = query.Where(b => b.ServiceName.ToLower().Contains(filter.ServiceName.ToLower()));
+
+        if (filter.StartDate.HasValue)
+            query = query.Where(b => b.Date >= filter.StartDate.Value);
+
+        if (filter.EndDate.HasValue)
+            query = query.Where(b => b.Date <= filter.EndDate.Value);
+
+        var totalCount = await query.CountAsync();
+
+        query = filter.OrderBy.ToLower() switch
+        {
+            "amount" => filter.IsDescending ? query.OrderByDescending(b => b.Amount) : query.OrderBy(b => b.Amount),
+            "clientname" => filter.IsDescending ? query.OrderByDescending(b => b.ClientName) : query.OrderBy(b => b.ClientName),
+            "servicename" => filter.IsDescending ? query.OrderByDescending(b => b.ServiceName) : query.OrderBy(b => b.ServiceName),
+            _ => filter.IsDescending ? query.OrderByDescending(b => b.Date) : query.OrderBy(b => b.Date)
+        };
+
+        var items = await query
+            .Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
     }
 }
