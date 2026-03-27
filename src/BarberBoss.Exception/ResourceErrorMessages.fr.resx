@@ -165,4 +165,7 @@
   <data name="NOTES_LENGTH" xml:space="preserve">
     <value>Les notes ne peuvent pas dépasser 500 caractères.</value>
   </data>
+  <data name="BILLING_NOT_FOUND" xml:space="preserve">
+    <value>Facturation introuvable.</value>
+  </data>
 </root>

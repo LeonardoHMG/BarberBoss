@@ -165,4 +165,7 @@
   <data name="NOTES_LENGTH" xml:space="preserve">
     <value>Las notas no pueden exceder los 500 caracteres.</value>
   </data>
+  <data name="BILLING_NOT_FOUND" xml:space="preserve">
+    <value>No se encontró la factura.</value>
+  </data>
 </root>

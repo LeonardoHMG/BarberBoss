@@ -165,4 +165,7 @@
   <data name="NOTES_LENGTH" xml:space="preserve">
     <value>Notes cannot exceed 500 characters.</value>
   </data>
+  <data name="BILLING_NOT_FOUND" xml:space="preserve">
+    <value>Billing not found</value>
+  </data>
 </root>
