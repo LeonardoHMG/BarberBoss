@@ -9,10 +9,10 @@ namespace BarberBoss.Application.UseCases.Billings.GetAll;
 
 public class GetAllBillingUseCase : IGetAllBillingUseCase
 {
-    private readonly IBillingsRepository _repository;
+    private readonly IBillingsReadOnlyRepository _repository;
     private readonly IMapper _mapper;
 
-    public GetAllBillingUseCase(IBillingsRepository repository, IMapper mapper)
+    public GetAllBillingUseCase(IBillingsReadOnlyRepository repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

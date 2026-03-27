@@ -10,11 +10,11 @@ namespace BarberBoss.Application.UseCases.Billings.Register;
 
 public class RegisterBillingUseCase : IRegisterBillingUseCase
 {
-    private readonly IBillingsRepository _repository;
+    private readonly IBillingsWriteOnlyRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public RegisterBillingUseCase(IBillingsRepository repository, IUnitOfWork unitOfWork, IMapper mapper)
+    public RegisterBillingUseCase(IBillingsWriteOnlyRepository repository, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;

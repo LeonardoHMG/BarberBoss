@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BarberBoss.Infrastructure.DataAccess.Repositories;
 
-internal class BillingsRepository : IBillingsRepository
+internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteOnlyRepository
 {
     private readonly BarberBossDbContext _dbContext;
 

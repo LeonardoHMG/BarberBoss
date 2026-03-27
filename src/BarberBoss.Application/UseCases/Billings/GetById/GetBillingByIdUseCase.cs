@@ -6,12 +6,12 @@ using BarberBoss.Exception.ExceptionsBase;
 
 namespace BarberBoss.Application.UseCases.Billings.GetById;
 
-public class GetBillingByIdUseCase‎ : IGetBillingByIdUseCase
+public class GetBillingByIdUseCase : IGetBillingByIdUseCase
 {
-    private readonly IBillingsRepository _repository;
+    private readonly IBillingsReadOnlyRepository _repository;
     private readonly IMapper _mapper;
 
-    public GetBillingByIdUseCase‎(IBillingsRepository repository, IMapper mapper)
+    public GetBillingByIdUseCase(IBillingsReadOnlyRepository repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
