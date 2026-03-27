@@ -51,4 +51,9 @@ internal class BillingsRepository : IBillingsRepository
 
         return (items, totalCount);
     }
+
+    public async Task<Billing?> GetById(Guid id)
+    {
+        return await _dbContext.Billings.AsNoTracking().FirstOrDefaultAsync(billing => billing.Id == id);
+    }
 }

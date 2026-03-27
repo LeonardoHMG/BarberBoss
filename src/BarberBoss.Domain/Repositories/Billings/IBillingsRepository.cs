@@ -5,4 +5,5 @@ public interface IBillingsRepository
 {
     Task Add(Billing billing);
     Task<(List<Billing> Items, int TotalCount)> GetAll(BillingFilter filter);
+    Task<Billing?> GetById(Guid id);
 }
