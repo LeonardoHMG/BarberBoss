@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BarberBoss.Infrastructure.DataAccess.Repositories;
 
-internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteOnlyRepository
+internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteOnlyRepository, IBillingUpdateOnlyRepository
 {
     private readonly BarberBossDbContext _dbContext;
 
@@ -66,8 +66,18 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         return (items, totalCount);
     }
 
-    public async Task<Billing?> GetById(Guid id)
+    async Task<Billing?> IBillingsReadOnlyRepository.GetById(Guid id)
     {
         return await _dbContext.Billings.AsNoTracking().FirstOrDefaultAsync(billing => billing.Id == id);
+    }
+
+    async Task<Billing?> IBillingUpdateOnlyRepository.GetById(Guid id)
+    {
+        return await _dbContext.Billings.FirstOrDefaultAsync(billing => billing.Id == id);
+    }
+
+    public void Update(Billing billing)
+    {
+        _dbContext.Billings.Update(billing);
     }
 }
