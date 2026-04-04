@@ -37,6 +37,8 @@ public class AutoMapping: Profile
                 src.ServiceName,
                 src.StartDate,
                 src.EndDate,
+                src.Status.HasValue ? (Domain.Enums.PaymentStatus)src.Status.Value : null,
+                src.PaymentMethod.HasValue ? (Domain.Enums.PaymentMethod)src.PaymentMethod.Value : null,
                 src.PageNumber,
                 src.PageSize,
                 src.OrderBy,

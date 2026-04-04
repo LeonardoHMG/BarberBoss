@@ -48,6 +48,12 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         if (filter.EndDate.HasValue)
             query = query.Where(b => b.Date <= filter.EndDate.Value);
 
+        if (filter.Status.HasValue)
+            query = query.Where(b => b.Status == filter.Status.Value);
+
+        if (filter.PaymentMethod.HasValue)
+            query = query.Where(b => b.PaymentMethod == filter.PaymentMethod.Value);
+
         var totalCount = await query.CountAsync();
 
         query = filter.OrderBy.ToLower() switch
