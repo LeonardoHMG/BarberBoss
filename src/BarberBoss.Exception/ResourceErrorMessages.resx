@@ -168,4 +168,7 @@
   <data name="BILLING_NOT_FOUND" xml:space="preserve">
     <value>Billing not found</value>
   </data>
+  <data name="BILLING_EXISTS" xml:space="preserve">
+    <value>A billing already exists for this client with this service on this date.</value>
+  </data>
 </root>

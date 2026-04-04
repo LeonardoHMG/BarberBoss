@@ -106,6 +106,15 @@ namespace BarberBoss.Exception {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A billing already exists for this client with this service on this date..
+        /// </summary>
+        public static string BILLING_EXISTS {
+            get {
+                return ResourceManager.GetString("BILLING_EXISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Billing not found.
         /// </summary>
         public static string BILLING_NOT_FOUND {

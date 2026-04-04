@@ -168,4 +168,7 @@
   <data name="BILLING_NOT_FOUND" xml:space="preserve">
     <value>Faturamento não encontrado.</value>
   </data>
+  <data name="BILLING_EXISTS" xml:space="preserve">
+    <value>Já existe um faturamento para este cliente neste serviço nesta data.</value>
+  </data>
 </root>

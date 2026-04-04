@@ -168,4 +168,7 @@
   <data name="BILLING_NOT_FOUND" xml:space="preserve">
     <value>Facturation introuvable.</value>
   </data>
+  <data name="BILLING_EXISTS" xml:space="preserve">
+    <value>Une facturation existe déjà pour ce client avec ce service à cette date.</value>
+  </data>
 </root>
