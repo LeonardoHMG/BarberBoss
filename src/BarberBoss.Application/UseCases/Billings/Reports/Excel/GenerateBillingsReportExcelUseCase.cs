@@ -4,7 +4,7 @@ namespace BarberBoss.Application.UseCases.Billings.Reports.Excel;
 
 public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUseCase
 {
-    public Task<byte[]> Execute(DateOnly date)
+    public async Task<byte[]> Execute(DateOnly month)
     {
         var workbook = new XLWorkbook();
 
@@ -15,6 +15,11 @@ public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUs
         var worksheet = workbook.Worksheets.Add("Page 1");
 
         InsertHeader(worksheet);
+
+        var file = new MemoryStream();
+        workbook.SaveAs(file);
+
+        return file.ToArray();
     }
 
     private void InsertHeader(IXLWorksheet worksheet)
@@ -28,6 +33,8 @@ public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUs
         worksheet.Cell("G1").Value = "Descrição";
 
         worksheet.Cells("A1:G1").Style.Font.Bold = true;
+
+        worksheet.Cells("A1:G1").Style.Font.FontColor = XLColor.White;
 
         worksheet.Cells("A1:G1").Style.Fill.BackgroundColor = XLColor.FromHtml("#205858");
 
