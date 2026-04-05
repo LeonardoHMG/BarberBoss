@@ -30,7 +30,7 @@ public class ExceptionFilter : IExceptionFilter
 
     private void ThrowUnkowError(ExceptionContext context)
     {
-        var errorResponse = new ResponseErrorJson(ResourceErrorMessages.UNKNOWN_ERROR);
+        var errorResponse = new ResponseErrorJson("Erro desconhecido.");
 
         context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         context.Result = new ObjectResult(errorResponse);

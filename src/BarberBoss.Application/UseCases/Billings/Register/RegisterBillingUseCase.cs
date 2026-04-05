@@ -31,7 +31,7 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
         var exists = await _readOnlyRepository.Exists(request.BarberName, request.ClientName, request.ServiceName, request.Date);
 
         if (exists)
-            throw new ConflictException(ResourceErrorMessages.BILLING_EXISTS);
+            throw new ConflictException("Já existe um faturamento para este cliente neste serviço nesta data.");
 
         var entity = _mapper.Map<Billing>(request);
 

@@ -28,7 +28,7 @@ public class UpdateBillingUseCase : IUpdateBillingUseCase
 
         if (billing is null)
         {
-            throw new NotFoundException(ResourceErrorMessages.BILLING_NOT_FOUND);
+            throw new NotFoundException("Faturamento não encontrado.");
         }
 
         _mapper.Map(request, billing);
