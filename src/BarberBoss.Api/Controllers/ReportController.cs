@@ -12,7 +12,7 @@ public class ReportController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GetExcel(
         [FromServices] IGenerateBillingsReportExcelUseCase useCase,
-        [FromHeader] DateOnly? date)
+        [FromHeader(Name = "Report-Date")] DateOnly? date)
     {
         byte[] file = await useCase.Execute(date ?? DateOnly.FromDateTime(DateTime.Today));
 

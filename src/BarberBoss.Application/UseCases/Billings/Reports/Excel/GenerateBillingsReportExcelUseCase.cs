@@ -1,7 +1,7 @@
 ﻿using BarberBoss.Application.Utilities;
 using BarberBoss.Domain.Repositories.Billings;
+using BarberBoss.Domain.Enums;
 using ClosedXML.Excel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BarberBoss.Application.UseCases.Billings.Reports.Excel;
 
@@ -31,14 +31,42 @@ public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUs
         workbook.Style.Font.FontSize = 12;
         workbook.Style.Font.FontName = "Times New Roman";
 
-        var worksheet = workbook.Worksheets.Add("Page 1");
+        var worksheet = workbook.Worksheets.Add($"{startDate.ToString("dd.MM")} - {endDate.ToString("dd.MM")}");
 
         InsertHeader(worksheet);
+
+        var raw = 2;
+
+        foreach (var billing in billings)
+        {
+            worksheet.Cell($"A{raw}").Value = billing.ServiceName;
+            worksheet.Cell($"B{raw}").Value = billing.BarberName;
+            worksheet.Cell($"C{raw}").Value = billing.ClientName;
+            worksheet.Cell($"D{raw}").Value = billing.Date.ToDateTime(TimeOnly.MinValue);
+            worksheet.Cell($"D{raw}").Style.NumberFormat.Format = "dd/MM/yyyy";
+            worksheet.Cell($"E{raw}").Value = ConvertPaymentMethod(billing.PaymentMethod);
+            worksheet.Cell($"F{raw}").Value = billing.Amount;
+            worksheet.Cell($"G{raw}").Value = billing.Notes;
+            raw++;
+        }
 
         var file = new MemoryStream();
         workbook.SaveAs(file);
 
         return file.ToArray();
+    }
+
+    private string ConvertPaymentMethod(PaymentMethod payment)
+    {
+        return payment switch
+        {
+            PaymentMethod.CreditCard => "Cartão de Crédito",
+            PaymentMethod.DebitCard => "Cartão de Débito",
+            PaymentMethod.Cash => "Dinheiro",
+            PaymentMethod.Pix => "Pix",
+            PaymentMethod.Other => "Outro",
+            _ => string.Empty
+        };
     }
 
     private void InsertHeader(IXLWorksheet worksheet)
