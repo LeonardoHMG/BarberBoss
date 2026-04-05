@@ -1,4 +1,5 @@
 ﻿using BarberBoss.Domain.Entities;
+using BarberBoss.Domain.Enums;
 using BarberBoss.Domain.Repositories.Billings;
 using Microsoft.EntityFrameworkCore;
 
@@ -100,7 +101,7 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
     {
         return await _dbContext.Billings
             .AsNoTracking()
-            .Where(b => b.Date >= startDate && b.Date <= endDate)
+            .Where(b => b.Date >= startDate && b.Date <= endDate && b.Status == PaymentStatus.Paid)
             .OrderBy(b => b.Date)
             .ToListAsync();
     }
