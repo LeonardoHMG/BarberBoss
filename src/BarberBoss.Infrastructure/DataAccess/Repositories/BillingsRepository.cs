@@ -95,4 +95,13 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         b.ServiceName.ToLower() == serviceName.ToLower() &&
         b.Date == date);
     }
+
+    public async Task<List<Billing>> FilterByWeek(DateOnly startDate, DateOnly endDate)
+    {
+        return await _dbContext.Billings
+            .AsNoTracking()
+            .Where(b => b.Date >= startDate && b.Date <= endDate)
+            .OrderBy(b => b.Date)
+            .ToListAsync();
+    }
 }

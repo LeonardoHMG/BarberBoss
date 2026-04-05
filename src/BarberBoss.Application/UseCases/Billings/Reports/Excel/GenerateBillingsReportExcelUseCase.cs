@@ -1,11 +1,30 @@
-﻿using ClosedXML.Excel;
+﻿using BarberBoss.Application.Utilities;
+using BarberBoss.Domain.Repositories.Billings;
+using ClosedXML.Excel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BarberBoss.Application.UseCases.Billings.Reports.Excel;
 
 public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUseCase
 {
-    public async Task<byte[]> Execute(DateOnly month)
+    private readonly IBillingsReadOnlyRepository _repository;
+
+    public GenerateBillingsReportExcelUseCase(IBillingsReadOnlyRepository repository)
     {
+        _repository = repository;
+    }
+
+    public async Task<byte[]> Execute(DateOnly date)
+    {
+        var (startDate, endDate) = DateHelper.GetWeek(date);
+
+        var billings = await _repository.FilterByWeek(startDate, endDate);
+
+        if (billings.Count == 0)
+        {
+            return [];
+        }
+
         var workbook = new XLWorkbook();
 
         workbook.Author = "Leonardo Gussi";
