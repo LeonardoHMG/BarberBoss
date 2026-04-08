@@ -2,6 +2,7 @@
 using BarberBoss.Application.Utilities;
 using BarberBoss.Domain.Repositories.Billings;
 using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
 using PdfSharp.Fonts;
 
 namespace BarberBoss.Application.UseCases.Billings.Reports.Pdf;
@@ -36,14 +37,14 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
 
         var title = $"Faturamento da semana {startDate} - {endDate}";
 
-        paragraph.AddFormattedText(title, new Font { Name = FontHelper.ROBOTO_REGULAR, Size = 15 });
+        paragraph.AddFormattedText(title, new Font { Name = FontHelper.ROBOTO_MEDIUM, Size = 15 });
 
         paragraph.AddLineBreak();
 
         var totalBillings = billings.Sum(b => b.Amount);
         paragraph.AddFormattedText($"{CURRENCY_SYMBOL} {totalBillings}", new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 50 });
 
-        return [];
+        return RenderDocument(document);
     }
 
     private Document CreateDocument(DateOnly startDate, DateOnly endDate)
@@ -73,5 +74,20 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         section.PageSetup.BottomMargin = 80;
 
         return section;
+    }
+
+    private byte[] RenderDocument(Document document)
+    {
+        var renderer = new PdfDocumentRenderer
+        {
+            Document = document,
+        };
+
+        renderer.RenderDocument();
+
+        using var file = new MemoryStream();
+        renderer.PdfDocument.Save(file);
+
+        return file.ToArray();
     }
 }

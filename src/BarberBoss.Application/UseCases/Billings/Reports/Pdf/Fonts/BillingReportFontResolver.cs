@@ -11,11 +11,11 @@ public class BillingReportFontResolver : IFontResolver
 
         stream ??= ReadFontFile(FontHelper.DEFAULT_FONT);
 
-        var lenght = (int)stream!.Length;
+        var length = (int)stream!.Length;
 
-        var data = new byte[lenght];
+        var data = new byte[length];
 
-        stream.Read(buffer: data, offset: 0, count:lenght);
+        stream.Read(buffer: data, offset: 0, count: length);
 
         return data;
     }
@@ -29,6 +29,6 @@ public class BillingReportFontResolver : IFontResolver
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        return assembly.GetManifestResourceStream($"BarberBoss.Application.Billings.Reports.Pdf.Fonts.{faceName}.ttf");
+        return assembly.GetManifestResourceStream($"BarberBoss.Application.UseCases.Billings.Reports.Pdf.Fonts.{faceName}.ttf");
     }
 }
