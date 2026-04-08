@@ -38,7 +38,7 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         var table = page.AddTable();
 
         table.AddColumn();
-        table.AddColumn();
+        table.AddColumn("300");
 
         var row = table.AddRow();
 
