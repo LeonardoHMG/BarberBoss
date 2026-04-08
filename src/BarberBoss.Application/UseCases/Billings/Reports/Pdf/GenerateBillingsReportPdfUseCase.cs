@@ -32,6 +32,17 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         var document = CreateDocument(startDate, endDate);
         var page = CreatePage(document);
 
+        var paragraph = page.AddParagraph();
+
+        var title = $"Faturamento da semana {startDate} - {endDate}";
+
+        paragraph.AddFormattedText(title, new Font { Name = FontHelper.ROBOTO_REGULAR, Size = 15 });
+
+        paragraph.AddLineBreak();
+
+        var totalBillings = billings.Sum(b => b.Amount);
+        paragraph.AddFormattedText($"{CURRENCY_SYMBOL} {totalBillings}", new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 50 });
+
         return [];
     }
 
