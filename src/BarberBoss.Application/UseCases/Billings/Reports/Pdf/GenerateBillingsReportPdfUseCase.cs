@@ -30,6 +30,7 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         }
 
         var document = CreateDocument(startDate, endDate);
+        var page = CreatePage(document);
 
         return [];
     }
@@ -45,5 +46,21 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         style!.Font.Name = FontHelper.BEBASNEUE_REGULAR;
 
         return document;
+    }
+
+    private Section CreatePage(Document document)
+    {
+        var section = document.AddSection();
+
+        section.PageSetup = document.DefaultPageSetup.Clone();
+
+        section.PageSetup.PageFormat = PageFormat.A4;
+
+        section.PageSetup.LeftMargin = 40;
+        section.PageSetup.RightMargin = 40;
+        section.PageSetup.TopMargin = 80;
+        section.PageSetup.BottomMargin = 80;
+
+        return section;
     }
 }
