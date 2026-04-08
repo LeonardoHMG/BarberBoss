@@ -26,4 +26,10 @@
     <ProjectReference Include="..\BarberBoss.Exception\BarberBoss.Exception.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Logo\BarberBoss.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

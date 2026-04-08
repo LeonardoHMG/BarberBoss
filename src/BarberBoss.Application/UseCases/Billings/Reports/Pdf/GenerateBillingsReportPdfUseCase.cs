@@ -4,6 +4,7 @@ using BarberBoss.Domain.Repositories.Billings;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.Rendering;
 using PdfSharp.Fonts;
+using System.Reflection;
 
 namespace BarberBoss.Application.UseCases.Billings.Reports.Pdf;
 
@@ -32,6 +33,24 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
 
         var document = CreateDocument(startDate, endDate);
         var page = CreatePage(document);
+
+        
+        var table = page.AddTable();
+
+        table.AddColumn();
+        table.AddColumn();
+
+        var row = table.AddRow();
+
+        var assembly = Assembly.GetExecutingAssembly();
+        var directoryName = Path.GetDirectoryName(assembly.Location);
+        var pathFile = Path.Combine(directoryName!, "Logo", "BarberBoss.png");
+
+        row.Cells[0].AddImage(pathFile);
+
+        row.Cells[1].AddParagraph("BARBEARIA DO JOÃO");
+        row.Cells[1].Format.Font = new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 25 };
+        row.Cells[1].VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
 
         var paragraph = page.AddParagraph();
 
