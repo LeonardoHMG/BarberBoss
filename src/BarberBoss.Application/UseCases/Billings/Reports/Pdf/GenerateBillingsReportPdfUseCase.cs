@@ -1,5 +1,7 @@
-﻿using BarberBoss.Application.Utilities;
+﻿using BarberBoss.Application.UseCases.Billings.Reports.Pdf.Fonts;
+using BarberBoss.Application.Utilities;
 using BarberBoss.Domain.Repositories.Billings;
+using PdfSharp.Fonts;
 
 namespace BarberBoss.Application.UseCases.Billings.Reports.Pdf;
 
@@ -11,6 +13,8 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
     public GenerateBillingsReportPdfUseCase(IBillingsReadOnlyRepository repository)
     {
         _repository = repository;
+
+        GlobalFontSettings.FontResolver = new BillingReportFontResolver();
     }
 
     public async Task<byte[]> Execute(DateOnly date)
