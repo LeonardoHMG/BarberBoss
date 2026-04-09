@@ -2,6 +2,7 @@
 using BarberBoss.Application.Utilities;
 using BarberBoss.Domain.Repositories.Billings;
 using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
 using PdfSharp.Fonts;
 using System.Reflection;
@@ -34,7 +35,34 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         var document = CreateDocument(startDate, endDate);
         var page = CreatePage(document);
 
-        
+        CreateHeaderWithPhotoAndName(page);
+
+        var totalBillings = billings.Sum(b => b.Amount);
+        CreateWeeklyBillingSection(page, startDate, endDate, totalBillings);
+
+        foreach(var billing in billings)
+        {
+            var table = CreateBillingTable(page);
+        }
+
+        return RenderDocument(document);
+    }
+
+    private Document CreateDocument(DateOnly startDate, DateOnly endDate)
+    {
+       var document = new Document();
+
+        document.Info.Title = $"Faturamento da semana {startDate} - {endDate}";
+        document.Info.Author = "Leonardo Gussi";
+
+        var style = document.Styles["Normal"];
+        style!.Font.Name = FontHelper.BEBASNEUE_REGULAR;
+
+        return document;
+    }
+
+    private void CreateHeaderWithPhotoAndName(Section page)
+    {
         var table = page.AddTable();
 
         table.AddColumn();
@@ -51,8 +79,15 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         row.Cells[1].AddParagraph("BARBEARIA DO JOÃO");
         row.Cells[1].Format.Font = new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 25 };
         row.Cells[1].VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Center;
+        row.Cells[1].Format.LeftIndent = "12";
+    }
 
+    private void CreateWeeklyBillingSection(Section page, DateOnly startDate, DateOnly endDate, decimal totalBillings)
+    {
         var paragraph = page.AddParagraph();
+
+        paragraph.Format.SpaceBefore = "40";
+        paragraph.Format.SpaceAfter = "40";
 
         var title = $"Faturamento da semana {startDate} - {endDate}";
 
@@ -60,23 +95,18 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
 
         paragraph.AddLineBreak();
 
-        var totalBillings = billings.Sum(b => b.Amount);
         paragraph.AddFormattedText($"{CURRENCY_SYMBOL} {totalBillings}", new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 50 });
-
-        return RenderDocument(document);
     }
 
-    private Document CreateDocument(DateOnly startDate, DateOnly endDate)
+    private Table CreateBillingTable(Section page)
     {
-       var document = new Document();
+        var table = page.AddTable();
 
-        document.Info.Title = $"Faturamento da semana {startDate} - {endDate}";
-        document.Info.Author = "Leonardo Gussi";
-
-        var style = document.Styles["Normal"];
-        style!.Font.Name = FontHelper.BEBASNEUE_REGULAR;
-
-        return document;
+        table.AddColumn("143").Format.Alignment = ParagraphAlignment.Left;
+        table.AddColumn("140").Format.Alignment = ParagraphAlignment.Center;
+        table.AddColumn("147").Format.Alignment = ParagraphAlignment.Center;
+        table.AddColumn("70").Format.Alignment = ParagraphAlignment.Right;
+        return table;
     }
 
     private Section CreatePage(Document document)
