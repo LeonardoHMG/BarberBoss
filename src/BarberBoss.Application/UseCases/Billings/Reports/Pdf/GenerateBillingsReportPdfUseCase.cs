@@ -1,4 +1,5 @@
-﻿using BarberBoss.Application.UseCases.Billings.Reports.Pdf.Fonts;
+﻿using BarberBoss.Application.UseCases.Billings.Reports.Pdf.Colors;
+using BarberBoss.Application.UseCases.Billings.Reports.Pdf.Fonts;
 using BarberBoss.Application.Utilities;
 using BarberBoss.Domain.Repositories.Billings;
 using MigraDoc.DocumentObjectModel;
@@ -43,6 +44,23 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         foreach(var billing in billings)
         {
             var table = CreateBillingTable(page);
+
+            var row = table.AddRow();
+            row.Cells[0].AddParagraph(billing.ServiceName);
+            row.Cells[0].Format.Font = new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 15, Color = ColorsHelper.WHITE };
+            row.Cells[0].Shading.Color = ColorsHelper.GREEN_DARK;
+            row.Cells[0].VerticalAlignment = VerticalAlignment.Center;
+            row.Cells[0].MergeRight = 2;
+            row.Cells[0].Format.LeftIndent = 5;
+
+            row.Cells[3].AddParagraph("VALOR");
+            row.Cells[3].Format.Font = new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 15, Color = ColorsHelper.WHITE };
+            row.Cells[3].Shading.Color = ColorsHelper.GREEN;
+            row.Cells[3].VerticalAlignment = VerticalAlignment.Center;
+
+            row = table.AddRow();
+            row.Height = 16;
+            row.Borders.Visible = false;
         }
 
         return RenderDocument(document);
