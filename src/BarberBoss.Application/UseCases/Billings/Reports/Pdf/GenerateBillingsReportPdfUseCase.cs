@@ -1,6 +1,7 @@
 ﻿using BarberBoss.Application.UseCases.Billings.Reports.Pdf.Colors;
 using BarberBoss.Application.UseCases.Billings.Reports.Pdf.Fonts;
 using BarberBoss.Application.Utilities;
+using BarberBoss.Domain.Extensions;
 using BarberBoss.Domain.Repositories.Billings;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
@@ -13,6 +14,8 @@ namespace BarberBoss.Application.UseCases.Billings.Reports.Pdf;
 public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCase
 {
     private const string CURRENCY_SYMBOL = "R$";
+    private const int HEIGHT_ROW_BILLING_TABLE = 25;
+
     private readonly IBillingsReadOnlyRepository _repository;
 
     public GenerateBillingsReportPdfUseCase(IBillingsReadOnlyRepository repository)
@@ -46,21 +49,27 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
             var table = CreateBillingTable(page);
 
             var row = table.AddRow();
-            row.Cells[0].AddParagraph(billing.ServiceName);
-            row.Cells[0].Format.Font = new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 15, Color = ColorsHelper.WHITE };
-            row.Cells[0].Shading.Color = ColorsHelper.GREEN_DARK;
-            row.Cells[0].VerticalAlignment = VerticalAlignment.Center;
-            row.Cells[0].MergeRight = 2;
-            row.Cells[0].Format.LeftIndent = 5;
-
-            row.Cells[3].AddParagraph("VALOR");
-            row.Cells[3].Format.Font = new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 15, Color = ColorsHelper.WHITE };
-            row.Cells[3].Shading.Color = ColorsHelper.GREEN;
-            row.Cells[3].VerticalAlignment = VerticalAlignment.Center;
+            row.Height = HEIGHT_ROW_BILLING_TABLE;
+           
+            AddBillingServiceName(row.Cells[0], billing.ServiceName);
+            AddHeaderForAmount(row.Cells[3]);
 
             row = table.AddRow();
-            row.Height = 16;
-            row.Borders.Visible = false;
+            row.Height = HEIGHT_ROW_BILLING_TABLE;
+
+            row.Cells[0].AddParagraph(billing.CreatedAt.ToString("dd 'de' MMMM 'de' yyyy"));
+            SetStyleBaseForBillingInformation(row.Cells[0]);
+            row.Cells[0].Format.LeftIndent = 9;
+
+            row.Cells[1].AddParagraph(billing.CreatedAt.ToString("t"));
+            SetStyleBaseForBillingInformation(row.Cells[1]); 
+
+            row.Cells[2].AddParagraph(billing.PaymentMethod.ConvertPaymentMethod());
+            SetStyleBaseForBillingInformation(row.Cells[2]);
+
+            AddAmountForBilling(row.Cells[3], billing.Amount);
+
+            AddWhiteSpace(table);
         }
 
         return RenderDocument(document);
@@ -78,6 +87,23 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
 
         return document;
     }
+
+    private Section CreatePage(Document document)
+    {
+        var section = document.AddSection();
+
+        section.PageSetup = document.DefaultPageSetup.Clone();
+
+        section.PageSetup.PageFormat = PageFormat.A4;
+
+        section.PageSetup.LeftMargin = 40;
+        section.PageSetup.RightMargin = 40;
+        section.PageSetup.TopMargin = 80;
+        section.PageSetup.BottomMargin = 80;
+
+        return section;
+    }
+
 
     private void CreateHeaderWithPhotoAndName(Section page)
     {
@@ -127,20 +153,71 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         return table;
     }
 
-    private Section CreatePage(Document document)
+    private void AddBillingServiceName(Cell cell, string serviceName)
     {
-        var section = document.AddSection();
+        cell.AddParagraph(serviceName);
+        
+        cell.Format.Font = new Font 
+        { 
+            Name = FontHelper.BEBASNEUE_REGULAR, 
+            Size = 15, 
+            Color = ColorsHelper.WHITE 
+        };
 
-        section.PageSetup = document.DefaultPageSetup.Clone();
+        cell.Shading.Color = ColorsHelper.GREEN_DARK;
+        cell.VerticalAlignment = VerticalAlignment.Center;
+        cell.MergeRight = 2;
+        cell.Format.LeftIndent = 5;
+    }
 
-        section.PageSetup.PageFormat = PageFormat.A4;
+    private void AddHeaderForAmount(Cell cell)
+    {
+        cell.AddParagraph("VALOR");
 
-        section.PageSetup.LeftMargin = 40;
-        section.PageSetup.RightMargin = 40;
-        section.PageSetup.TopMargin = 80;
-        section.PageSetup.BottomMargin = 80;
+        cell.Format.Font = new Font 
+        { 
+            Name = FontHelper.BEBASNEUE_REGULAR, 
+            Size = 15, 
+            Color = ColorsHelper.WHITE 
+        };
 
-        return section;
+        cell.Shading.Color = ColorsHelper.GREEN;
+        cell.VerticalAlignment = VerticalAlignment.Center;
+    }
+
+    private void SetStyleBaseForBillingInformation(Cell cell)
+    {
+        cell.Format.Font = new Font 
+        { 
+            Name = FontHelper.ROBOTO_REGULAR, 
+            Size = 10, 
+            Color = ColorsHelper.BLACK 
+        };
+
+        cell.Shading.Color = ColorsHelper.GRAY;
+        cell.VerticalAlignment = VerticalAlignment.Center;
+    }
+
+    private void AddAmountForBilling(Cell cell, decimal amount)
+    {
+        cell.AddParagraph($"{CURRENCY_SYMBOL} {amount}");
+
+        cell.Format.Font = new Font 
+        { 
+            Name = FontHelper.ROBOTO_REGULAR, 
+            Size = 10, 
+            Color = ColorsHelper.BLACK 
+        };
+
+        cell.Shading.Color = ColorsHelper.WHITE;
+        cell.VerticalAlignment = VerticalAlignment.Center;
+    }
+
+    private void AddWhiteSpace(Table table)
+    {
+        var row = table.AddRow();
+        row.Height = 16;
+        row.Borders.Visible = false;
     }
 
     private byte[] RenderDocument(Document document)

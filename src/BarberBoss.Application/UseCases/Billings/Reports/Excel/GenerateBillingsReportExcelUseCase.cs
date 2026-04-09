@@ -2,6 +2,7 @@
 using BarberBoss.Domain.Repositories.Billings;
 using BarberBoss.Domain.Enums;
 using ClosedXML.Excel;
+using BarberBoss.Domain.Extensions;
 
 namespace BarberBoss.Application.UseCases.Billings.Reports.Excel;
 
@@ -44,7 +45,7 @@ public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUs
             worksheet.Cell($"B{raw}").Value = billing.Date.ToDateTime(TimeOnly.MinValue);
             worksheet.Cell($"B{raw}").Style.NumberFormat.Format = "dd/MM/yyyy";
             worksheet.Cell($"B{raw}").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
-            worksheet.Cell($"C{raw}").Value = ConvertPaymentMethod(billing.PaymentMethod);
+            worksheet.Cell($"C{raw}").Value = billing.PaymentMethod.ConvertPaymentMethod();
             worksheet.Cell($"C{raw}").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
             worksheet.Cell($"D{raw}").Value = billing.Amount;
             worksheet.Cell($"D{raw}").Style.NumberFormat.Format = $"{CURRENCY_SYMBOL} #,##0.00";
@@ -73,19 +74,6 @@ public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUs
         workbook.SaveAs(file);
 
         return file.ToArray();
-    }
-
-    private string ConvertPaymentMethod(PaymentMethod payment)
-    {
-        return payment switch
-        {
-            PaymentMethod.CreditCard => "Cartão de Crédito",
-            PaymentMethod.DebitCard => "Cartão de Débito",
-            PaymentMethod.Cash => "Dinheiro",
-            PaymentMethod.Pix => "Pix",
-            PaymentMethod.Other => "Outro",
-            _ => string.Empty
-        };
     }
 
     private void InsertHeader(IXLWorksheet worksheet)
