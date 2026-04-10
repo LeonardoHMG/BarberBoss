@@ -69,6 +69,26 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
 
             AddAmountForBilling(row.Cells[3], billing.Amount);
 
+            if (string.IsNullOrWhiteSpace(billing.Notes) == false)
+            {
+                var descriptionRow = table.AddRow();
+                descriptionRow.Height = HEIGHT_ROW_BILLING_TABLE;
+
+                descriptionRow.Cells[0].AddParagraph(billing.Notes);
+                
+                descriptionRow.Cells[0].Format.Font = new Font
+                {
+                    Name = FontHelper.ROBOTO_REGULAR,
+                    Size = 10,
+                    Color = ColorsHelper.DESCRIPTION
+                };
+
+                descriptionRow.Cells[0].Shading.Color = ColorsHelper.GRAY_LIGHT;
+                descriptionRow.Cells[0].VerticalAlignment = VerticalAlignment.Center;
+                descriptionRow[0].MergeRight = 2;
+                descriptionRow.Cells[0].Format.LeftIndent = 9;
+            }
+
             AddWhiteSpace(table);
         }
 
