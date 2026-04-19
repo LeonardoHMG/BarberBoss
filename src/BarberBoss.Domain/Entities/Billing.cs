@@ -4,7 +4,7 @@ namespace BarberBoss.Domain.Entities;
 public class Billing
 {
     public Guid Id { get; private set; }
-    public DateOnly Date { get; set; }
+    public DateTime ServiceDate { get; set; }
     public string BarberName { get; set; } = string.Empty;
     public string ClientName { get; set; } = string.Empty;
     public string ServiceName { get; set; } = string.Empty;
@@ -18,7 +18,7 @@ public class Billing
     protected Billing() { }
 
     public Billing(
-        DateOnly date,
+        DateTime serviceDate,
         string barberName,
         string clientName,
         string serviceName,
@@ -28,7 +28,7 @@ public class Billing
         string? notes = null)
     {
         Id = Guid.NewGuid();
-        Date = date;
+        ServiceDate = serviceDate;
         BarberName = barberName;
         ClientName = clientName;
         ServiceName = serviceName;
@@ -37,7 +37,7 @@ public class Billing
         Status = status;
         Notes = notes;
 
-        var now = DateTime.UtcNow;
+        var now = DateTime.Now;
         CreatedAt = now;
         UpdatedAt = now;
     }

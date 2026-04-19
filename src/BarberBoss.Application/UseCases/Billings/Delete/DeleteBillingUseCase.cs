@@ -22,7 +22,7 @@ public class DeleteBillingUseCase : IDeleteBillingUseCase
 
         if (result == false)
         {
-            throw new NotFoundException("Faturamento não encontrado.");
+            throw new NotFoundException(ResourceErrorMessages.BILLING_NOT_FOUND);
         }
 
         await _unitOfWork.Commit();

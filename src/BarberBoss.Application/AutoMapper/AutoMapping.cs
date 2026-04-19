@@ -35,8 +35,11 @@ public class AutoMapping: Profile
             .ConstructUsing(src => new BillingFilter(
                 src.BarberName,
                 src.ServiceName,
+                src.ClientName,
                 src.StartDate,
                 src.EndDate,
+                src.MinAmount.HasValue ? src.MinAmount.Value : 0,
+                src.MaxAmount.HasValue ? src.MaxAmount.Value : 0,
                 src.Status.HasValue ? (Domain.Enums.PaymentStatus)src.Status.Value : null,
                 src.PaymentMethod.HasValue ? (Domain.Enums.PaymentMethod)src.PaymentMethod.Value : null,
                 src.PageNumber,

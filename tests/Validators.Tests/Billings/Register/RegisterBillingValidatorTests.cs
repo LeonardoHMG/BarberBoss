@@ -18,12 +18,29 @@ public class RegisterBillingValidatorTests
         result.IsValid.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData(6)]  
+    [InlineData(14)]
+    [InlineData(23)]
+    public void Success_Service_Hour_Valid(int hour)
+    {
+        var validator = new BillingValidator();
+        var request = RequestRegisterBillingJsonBuilder.Build();
+
+        var date = DateTime.Now.AddDays(-1);
+        request.ServiceDate = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
+
+        var result = validator.Validate(request);
+
+        result.IsValid.ShouldBeTrue();
+    }
+
     [Fact]
     public void Error_Date_Future()
     {
         var validator = new BillingValidator();
         var request = RequestRegisterBillingJsonBuilder.Build();
-        request.Date = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        request.ServiceDate = DateTime.Now.AddDays(1).Date.AddHours(10);
 
         var result = validator.Validate(request);
 
@@ -36,12 +53,29 @@ public class RegisterBillingValidatorTests
     {
         var validator = new BillingValidator();
         var request = RequestRegisterBillingJsonBuilder.Build();
-        request.Date = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-2));
+        request.ServiceDate = DateTime.Now.AddYears(-3).Date.AddHours(10);
 
         var result = validator.Validate(request);
 
         result.IsValid.ShouldBeFalse();
         result.Errors.ShouldContain(e => e.ErrorMessage.Equals(ResourceErrorMessages.DATE_TOO_OLD));
+    }
+
+    [Theory]
+    [InlineData(5)]  
+    [InlineData(0)] 
+    public void Error_Service_Hour_Invalid(int hour)
+    {
+        var validator = new BillingValidator();
+        var request = RequestRegisterBillingJsonBuilder.Build();
+
+        var date = DateTime.Now.AddDays(-1);
+        request.ServiceDate = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
+
+        var result = validator.Validate(request);
+
+        result.IsValid.ShouldBeFalse();
+        result.Errors.ShouldContain(e => e.ErrorMessage.Equals(ResourceErrorMessages.SERVICE_HOUR_INVALID));
     }
 
     [Theory]

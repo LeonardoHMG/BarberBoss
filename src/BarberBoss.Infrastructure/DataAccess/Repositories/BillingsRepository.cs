@@ -43,11 +43,26 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         if (!string.IsNullOrWhiteSpace(filter.ServiceName))
             query = query.Where(b => b.ServiceName.ToLower().Contains(filter.ServiceName.ToLower()));
 
+        if (!string.IsNullOrWhiteSpace(filter.ClientName))
+            query = query.Where(b => b.ClientName.Contains(filter.ClientName));
+
+        if (filter.MinAmount.HasValue)
+            query = query.Where(b => b.Amount >= filter.MinAmount.Value);
+
+        if (filter.MaxAmount.HasValue)
+            query = query.Where(b => b.Amount <= filter.MaxAmount.Value);
+
         if (filter.StartDate.HasValue)
-            query = query.Where(b => b.Date >= filter.StartDate.Value);
+        {
+            var start = filter.StartDate.Value.ToDateTime(new TimeOnly(7, 0, 0));
+            query = query.Where(b => b.ServiceDate >= start);
+        }
 
         if (filter.EndDate.HasValue)
-            query = query.Where(b => b.Date <= filter.EndDate.Value);
+        {
+            var end = filter.EndDate.Value.ToDateTime(new TimeOnly(22, 0, 0));
+            query = query.Where(b => b.ServiceDate <= end);
+        }
 
         if (filter.Status.HasValue)
             query = query.Where(b => b.Status == filter.Status.Value);
@@ -62,7 +77,7 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
             "amount" => filter.IsDescending ? query.OrderByDescending(b => b.Amount) : query.OrderBy(b => b.Amount),
             "clientname" => filter.IsDescending ? query.OrderByDescending(b => b.ClientName) : query.OrderBy(b => b.ClientName),
             "servicename" => filter.IsDescending ? query.OrderByDescending(b => b.ServiceName) : query.OrderBy(b => b.ServiceName),
-            _ => filter.IsDescending ? query.OrderByDescending(b => b.Date) : query.OrderBy(b => b.Date)
+            _ => filter.IsDescending ? query.OrderByDescending(b => b.ServiceDate) : query.OrderBy(b => b.ServiceDate)
         };
 
         var items = await query
@@ -88,21 +103,23 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         _dbContext.Billings.Update(billing);
     }
 
-    public async Task<bool> Exists(string barberName, string clientName, string serviceName, DateOnly date)
+    public async Task<bool> Exists(string barberName, string clientName, string serviceName, DateTime serviceDate)
     {
+        var dateOnly = serviceDate.Date;
+
         return await _dbContext.Billings.AnyAsync(b =>
-        b.BarberName.ToLower() == barberName.ToLower() &&
-        b.ClientName.ToLower() == clientName.ToLower() &&
-        b.ServiceName.ToLower() == serviceName.ToLower() &&
-        b.Date == date);
+            b.BarberName.ToLower() == barberName.ToLower() &&
+            b.ClientName.ToLower() == clientName.ToLower() &&
+            b.ServiceName.ToLower() == serviceName.ToLower() &&
+            b.ServiceDate.Date == dateOnly);
     }
 
-    public async Task<List<Billing>> FilterByWeek(DateOnly startDate, DateOnly endDate)
+    public async Task<List<Billing>> FilterByWeek(DateTime startDate, DateTime endDate)
     {
         return await _dbContext.Billings
             .AsNoTracking()
-            .Where(b => b.Date >= startDate && b.Date <= endDate && b.Status == PaymentStatus.Paid)
-            .OrderBy(b => b.Date)
+            .Where(b => b.ServiceDate >= startDate && b.ServiceDate <= endDate && b.Status == PaymentStatus.Paid)
+            .OrderBy(b => b.ServiceDate)
             .ToListAsync();
     }
 }

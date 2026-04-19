@@ -14,7 +14,7 @@ namespace BarberBoss.Application.UseCases.Billings.Reports.Pdf;
 public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCase
 {
     private const string CURRENCY_SYMBOL = "R$";
-    private const int HEIGHT_ROW_BILLING_TABLE = 25;
+    private const int HEIGHT_ROW_BILLING_TABLE = 22;
 
     private readonly IBillingsReadOnlyRepository _repository;
 
@@ -44,38 +44,47 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         var totalBillings = billings.Sum(b => b.Amount);
         CreateWeeklyBillingSection(page, startDate, endDate, totalBillings);
 
-        foreach(var billing in billings)
+        foreach (var billing in billings)
         {
             var table = CreateBillingTable(page);
 
-            var row = table.AddRow();
-            row.Height = HEIGHT_ROW_BILLING_TABLE;
-           
-            AddBillingServiceName(row.Cells[0], billing.ServiceName);
-            AddHeaderForAmount(row.Cells[3]);
+            var row1 = table.AddRow();
+            row1.Height = HEIGHT_ROW_BILLING_TABLE;
+            AddBillingServiceName(row1.Cells[0], billing.ServiceName); 
+            AddHeaderForAmount(row1.Cells[2]);                         
 
-            row = table.AddRow();
-            row.Height = HEIGHT_ROW_BILLING_TABLE;
+            var rowDetailsA = table.AddRow();
+            rowDetailsA.Height = HEIGHT_ROW_BILLING_TABLE;
 
-            row.Cells[0].AddParagraph(billing.CreatedAt.ToString("dd 'de' MMMM 'de' yyyy"));
-            SetStyleBaseForBillingInformation(row.Cells[0]);
-            row.Cells[0].Format.LeftIndent = 9;
+            rowDetailsA.Cells[0].AddParagraph($"Método de pagamento: {billing.PaymentMethod.ConvertPaymentMethod()}");
+            rowDetailsA.Cells[1].AddParagraph($"Barbeiro: {billing.BarberName}");
+            rowDetailsA.Cells[1].Format.Font.Bold = true;
 
-            row.Cells[1].AddParagraph(billing.CreatedAt.ToString("t"));
-            SetStyleBaseForBillingInformation(row.Cells[1]); 
+            SetStyleBaseForBillingInformation(rowDetailsA.Cells[0]);
+            SetStyleBaseForBillingInformation(rowDetailsA.Cells[1]);
 
-            row.Cells[2].AddParagraph(billing.PaymentMethod.ConvertPaymentMethod());
-            SetStyleBaseForBillingInformation(row.Cells[2]);
+            bool hasNotes = !string.IsNullOrWhiteSpace(billing.Notes);
+            var amountCell = rowDetailsA.Cells[2];
 
-            AddAmountForBilling(row.Cells[3], billing.Amount);
+            amountCell.MergeDown = hasNotes ? 2 : 1;
+            AddAmountForBilling(amountCell, billing.Amount);
 
-            if (string.IsNullOrWhiteSpace(billing.Notes) == false)
+            var rowDetailsB = table.AddRow();
+            rowDetailsB.Height = HEIGHT_ROW_BILLING_TABLE;
+            
+            rowDetailsB.Cells[0].AddParagraph(billing.ServiceDate.ToString("dd 'de' MMMM 'de' yyyy 'às' HH:mm"));
+            rowDetailsB.Cells[1].AddParagraph($"Cliente: {billing.ClientName}");
+
+            SetStyleBaseForBillingInformation(rowDetailsB.Cells[0]);
+            SetStyleBaseForBillingInformation(rowDetailsB.Cells[1]);
+
+            if (hasNotes)
             {
                 var descriptionRow = table.AddRow();
                 descriptionRow.Height = HEIGHT_ROW_BILLING_TABLE;
 
-                descriptionRow.Cells[0].AddParagraph(billing.Notes);
-                
+                descriptionRow.Cells[0].AddParagraph($"Observações: {billing.Notes}");
+
                 descriptionRow.Cells[0].Format.Font = new Font
                 {
                     Name = FontHelper.ROBOTO_REGULAR,
@@ -85,8 +94,8 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
 
                 descriptionRow.Cells[0].Shading.Color = ColorsHelper.GRAY_LIGHT;
                 descriptionRow.Cells[0].VerticalAlignment = VerticalAlignment.Center;
-                descriptionRow[0].MergeRight = 2;
-                descriptionRow.Cells[0].Format.LeftIndent = 9;
+                descriptionRow[0].MergeRight = 1;
+                descriptionRow.Cells[0].Format.LeftIndent = 8;
             }
 
             AddWhiteSpace(table);
@@ -95,11 +104,11 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         return RenderDocument(document);
     }
 
-    private Document CreateDocument(DateOnly startDate, DateOnly endDate)
+    private Document CreateDocument(DateTime startDate, DateTime endDate)
     {
        var document = new Document();
 
-        document.Info.Title = $"Faturamento da semana {startDate} - {endDate}";
+        document.Info.Title = $"Faturamento da semana {startDate.ToString("d")} - {endDate.ToString("d")}";
         document.Info.Author = "Leonardo Gussi";
 
         var style = document.Styles["Normal"];
@@ -124,7 +133,6 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         return section;
     }
 
-
     private void CreateHeaderWithPhotoAndName(Section page)
     {
         var table = page.AddTable();
@@ -146,14 +154,14 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
         row.Cells[1].Format.LeftIndent = "12";
     }
 
-    private void CreateWeeklyBillingSection(Section page, DateOnly startDate, DateOnly endDate, decimal totalBillings)
+    private void CreateWeeklyBillingSection(Section page, DateTime startDate, DateTime endDate, decimal totalBillings)
     {
         var paragraph = page.AddParagraph();
 
         paragraph.Format.SpaceBefore = "40";
         paragraph.Format.SpaceAfter = "40";
 
-        var title = $"Faturamento da semana {startDate} - {endDate}";
+        var title = $"Faturamento da semana {startDate.ToString("d")} - {endDate.ToString("d")}";
 
         paragraph.AddFormattedText(title, new Font { Name = FontHelper.ROBOTO_MEDIUM, Size = 15 });
 
@@ -166,28 +174,27 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
     {
         var table = page.AddTable();
 
-        table.AddColumn("143").Format.Alignment = ParagraphAlignment.Left;
-        table.AddColumn("140").Format.Alignment = ParagraphAlignment.Center;
-        table.AddColumn("147").Format.Alignment = ParagraphAlignment.Center;
-        table.AddColumn("70").Format.Alignment = ParagraphAlignment.Right;
+        table.AddColumn("210").Format.Alignment = ParagraphAlignment.Left;
+        table.AddColumn("210").Format.Alignment = ParagraphAlignment.Center;
+        table.AddColumn("80").Format.Alignment = ParagraphAlignment.Right;
         return table;
     }
 
     private void AddBillingServiceName(Cell cell, string serviceName)
     {
-        cell.AddParagraph(serviceName);
-        
-        cell.Format.Font = new Font 
-        { 
-            Name = FontHelper.BEBASNEUE_REGULAR, 
-            Size = 15, 
-            Color = ColorsHelper.WHITE 
+        cell.AddParagraph(serviceName.ToUpper()); 
+
+        cell.Format.Font = new Font
+        {
+            Name = FontHelper.BEBASNEUE_REGULAR,
+            Size = 15,
+            Color = ColorsHelper.WHITE
         };
 
         cell.Shading.Color = ColorsHelper.GREEN_DARK;
         cell.VerticalAlignment = VerticalAlignment.Center;
-        cell.MergeRight = 2;
-        cell.Format.LeftIndent = 5;
+        cell.MergeRight = 1; 
+        cell.Format.LeftIndent = 8;
     }
 
     private void AddHeaderForAmount(Cell cell)
@@ -207,30 +214,34 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
 
     private void SetStyleBaseForBillingInformation(Cell cell)
     {
-        cell.Format.Font = new Font 
-        { 
-            Name = FontHelper.ROBOTO_REGULAR, 
-            Size = 10, 
-            Color = ColorsHelper.BLACK 
+        cell.Format.Font = new Font
+        {
+            Name = FontHelper.ROBOTO_REGULAR,
+            Size = 10,
+            Color = ColorsHelper.BLACK
         };
 
         cell.Shading.Color = ColorsHelper.GRAY;
         cell.VerticalAlignment = VerticalAlignment.Center;
+        cell.Format.LeftIndent = 8;
     }
 
     private void AddAmountForBilling(Cell cell, decimal amount)
     {
-        cell.AddParagraph($"{CURRENCY_SYMBOL} {amount}");
+        cell.AddParagraph($"{CURRENCY_SYMBOL} {amount:N2}");
 
-        cell.Format.Font = new Font 
-        { 
-            Name = FontHelper.ROBOTO_REGULAR, 
-            Size = 10, 
-            Color = ColorsHelper.BLACK 
+        cell.Format.Font = new Font
+        {
+            Name = FontHelper.ROBOTO_REGULAR,
+            Size = 10,
+            Bold = true, 
+            Color = ColorsHelper.BLACK
         };
 
         cell.Shading.Color = ColorsHelper.WHITE;
         cell.VerticalAlignment = VerticalAlignment.Center;
+        cell.Format.Alignment = ParagraphAlignment.Right;
+        cell.Format.Font.Bold = true;
     }
 
     private void AddWhiteSpace(Table table)

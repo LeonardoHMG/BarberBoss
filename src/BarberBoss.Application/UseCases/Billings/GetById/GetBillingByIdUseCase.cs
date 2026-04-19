@@ -23,7 +23,7 @@ public class GetBillingByIdUseCase : IGetBillingByIdUseCase
 
         if (result is null)
         {
-            throw new NotFoundException("Faturamento não encontrado.");
+            throw new NotFoundException(ResourceErrorMessages.BILLING_NOT_FOUND);
         }
 
         return _mapper.Map<ResponseBillingJson>(result);

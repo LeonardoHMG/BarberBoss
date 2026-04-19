@@ -22,74 +22,110 @@ public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUs
 
         var billings = await _repository.FilterByWeek(startDate, endDate);
 
-        if (billings.Count == 0)
-        {
-            return [];
-        }
+        if (billings.Count == 0) return [];
 
         using var workbook = new XLWorkbook();
-
         workbook.Author = "Leonardo Gussi";
         workbook.Style.Font.FontSize = 12;
         workbook.Style.Font.FontName = "Times New Roman";
 
-        var worksheet = workbook.Worksheets.Add($"{startDate.ToString("dd.MM")} - {endDate.ToString("dd.MM")}");
+        var worksheet = workbook.Worksheets.Add($"{startDate:dd.MM} - {endDate:dd.MM}");
 
-        InsertHeader(worksheet);
+        InsertHeader(worksheet, startDate, endDate);
 
-        var raw = 2;
+        var row = 5;
 
         foreach (var billing in billings)
         {
-            worksheet.Cell($"A{raw}").Value = billing.ServiceName;
-            worksheet.Cell($"B{raw}").Value = billing.Date.ToDateTime(TimeOnly.MinValue);
-            worksheet.Cell($"B{raw}").Style.NumberFormat.Format = "dd/MM/yyyy";
-            worksheet.Cell($"B{raw}").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
-            worksheet.Cell($"C{raw}").Value = billing.PaymentMethod.ConvertPaymentMethod();
-            worksheet.Cell($"C{raw}").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
-            worksheet.Cell($"D{raw}").Value = billing.Amount;
-            worksheet.Cell($"D{raw}").Style.NumberFormat.Format = $"{CURRENCY_SYMBOL} #,##0.00";
-            worksheet.Cell($"D{raw}").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
-            worksheet.Cell($"E{raw}").Value = billing.Notes;
-            raw++;
+            worksheet.Cell($"A{row}").Value = billing.ServiceDate;
+            worksheet.Cell($"B{row}").Value = billing.BarberName;
+            worksheet.Cell($"C{row}").Value = billing.ServiceName;
+            worksheet.Cell($"D{row}").Value = billing.ClientName;
+            worksheet.Cell($"E{row}").Value = billing.PaymentMethod.ConvertPaymentMethod();
+            worksheet.Cell($"F{row}").Value = billing.Amount;
+            worksheet.Cell($"G{row}").Value = billing.Notes;
+            row++;
         }
 
-        worksheet.Cell($"C{raw}").Value = "Total pago:";
-        worksheet.Cell($"C{raw}").Style.Font.Bold = true;
-        worksheet.Cell($"C{raw}").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
-        worksheet.Cell($"C{raw}").Style.Fill.BackgroundColor = XLColor.FromHtml("#D9E8E8");
+        worksheet.Column("A").Style.NumberFormat.Format = "dd/MM/yyyy HH:mm";
+        worksheet.Columns("A:E").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
 
-        worksheet.Cell($"D{raw}").Value = billings.Sum(b => b.Amount);
-        worksheet.Cell($"D{raw}").Style.NumberFormat.Format = $"{CURRENCY_SYMBOL} #,##0.00";
-        worksheet.Cell($"D{raw}").Style.Font.Bold = true;
-        worksheet.Cell($"D{raw}").Style.Fill.BackgroundColor = XLColor.FromHtml("#D9E8E8");
+        worksheet.Column("F").Style.NumberFormat.Format = $"{CURRENCY_SYMBOL} #,##0.00";
+        worksheet.Column("F").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
 
-        worksheet.Column("A").Width = 40; 
-        worksheet.Column("B").Width = 15; 
-        worksheet.Column("C").Width = 20; 
-        worksheet.Column("D").Width = 15;
-        worksheet.Column("E").Width = 55; 
+        var totalRow = row + 1;
+        worksheet.Cell($"E{totalRow}").Value = "Total faturado:";
+        worksheet.Cell($"E{totalRow}").Style.Font.Bold = true;
+        worksheet.Cell($"E{totalRow}").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
 
-        var file = new MemoryStream();
+        var totalPaid = billings.Where(b => b.Status == PaymentStatus.Paid).Sum(b => b.Amount);
+        worksheet.Cell($"F{totalRow}").Value = totalPaid;
+        worksheet.Cell($"F{totalRow}").Style.NumberFormat.Format = $"{CURRENCY_SYMBOL} #,##0.00";
+        worksheet.Cell($"F{totalRow}").Style.Font.Bold = true;
+        worksheet.Cell($"F{totalRow}").Style.Fill.BackgroundColor = XLColor.FromHtml("#D9E8E8");
+
+        worksheet.Column("A").Width = 20;
+        worksheet.Column("B").Width = 20;
+        worksheet.Column("C").Width = 25;
+        worksheet.Column("D").Width = 20; 
+        worksheet.Column("E").Width = 20; 
+        worksheet.Column("F").Width = 15;
+        worksheet.Column("G").Width = 45;
+
+        if (row > 5)
+        {
+            var dataRange = worksheet.Range($"A5:G{row - 1}");
+            dataRange.Style.Alignment.WrapText = true;
+            dataRange.Style.Alignment.SetVertical(XLAlignmentVerticalValues.Top); 
+            
+            for (int i = 5; i < row; i++)
+            {
+                var currentRow = worksheet.Row(i);
+                currentRow.AdjustToContents();
+
+                if (worksheet.Cell(i, 7).Value.ToString().Length > 40)
+                {
+                    if (currentRow.Height < 35) currentRow.Height = 35;
+                }
+            }
+        }
+
+        using var file = new MemoryStream();
         workbook.SaveAs(file);
 
         return file.ToArray();
     }
 
-    private void InsertHeader(IXLWorksheet worksheet)
+    private void InsertHeader(IXLWorksheet worksheet, DateTime startDate, DateTime endDate)
     {
-        worksheet.Cell("A1").Value = "Título";
-        worksheet.Cell("B1").Value = "Data";
-        worksheet.Cell("C1").Value = "Tipo de Pagamento";
-        worksheet.Cell("D1").Value = "Valor";
-        worksheet.Cell("E1").Value = "Descrição";
+        var titleCell = worksheet.Cell("A1");
+        titleCell.Value = "Relatório de Faturamento Semanal - BarberBoss";
+        worksheet.Range("A1:G1").Merge();
+        titleCell.Style.Font.Bold = true;
+        titleCell.Style.Font.FontSize = 16;
+        titleCell.Style.Font.FontColor = XLColor.FromHtml("#205858");
+        titleCell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
 
-        worksheet.Cells("A1:E1").Style.Font.Bold = true;
+        var periodCell = worksheet.Cell("A2");
+        periodCell.Value = $"Período: {startDate:dd/MM/yyyy} até {endDate:dd/MM/yyyy}";
+        worksheet.Range("A2:G2").Merge();
+        periodCell.Style.Font.Italic = true;
+        periodCell.Style.Font.FontSize = 12;
+        periodCell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
 
-        worksheet.Cells("A1:E1").Style.Font.FontColor = XLColor.White;
+        var headerRow = 4;
+        worksheet.Cell($"A{headerRow}").Value = "Data";
+        worksheet.Cell($"B{headerRow}").Value = "Barbeiro";
+        worksheet.Cell($"C{headerRow}").Value = "Serviço";
+        worksheet.Cell($"D{headerRow}").Value = "Cliente";
+        worksheet.Cell($"E{headerRow}").Value = "Método de Pagamento";
+        worksheet.Cell($"F{headerRow}").Value = "Valor";
+        worksheet.Cell($"G{headerRow}").Value = "Observações";
 
-        worksheet.Cells("A1:E1").Style.Fill.BackgroundColor = XLColor.FromHtml("#205858");
-
-        worksheet.Cells("A1:E1").Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+        var headerRange = worksheet.Range($"A{headerRow}:G{headerRow}");
+        headerRange.Style.Font.Bold = true;
+        headerRange.Style.Font.FontColor = XLColor.White;
+        headerRange.Style.Fill.BackgroundColor = XLColor.FromHtml("#205858");
+        headerRange.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
     }
 }

@@ -28,10 +28,10 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
     {
         Validate(request);
 
-        var exists = await _readOnlyRepository.Exists(request.BarberName, request.ClientName, request.ServiceName, request.Date);
+        var exists = await _readOnlyRepository.Exists(request.BarberName, request.ClientName, request.ServiceName, request.ServiceDate);
 
         if (exists)
-            throw new ConflictException("Já existe um faturamento para este cliente neste serviço nesta data.");
+            throw new ConflictException(ResourceErrorMessages.BILLING_ALREADY_EXISTS);
 
         var entity = _mapper.Map<Billing>(request);
 
