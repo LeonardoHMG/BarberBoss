@@ -99,7 +99,7 @@ public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUs
     private void InsertHeader(IXLWorksheet worksheet, DateTime startDate, DateTime endDate)
     {
         var titleCell = worksheet.Cell("A1");
-        titleCell.Value = "Relatório de Faturamento Semanal - BarberBoss";
+        titleCell.Value = "Relatório de Faturamento Semanal - Barbearia do João";
         worksheet.Range("A1:G1").Merge();
         titleCell.Style.Font.Bold = true;
         titleCell.Style.Font.FontSize = 16;
