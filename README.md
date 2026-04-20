@@ -13,7 +13,9 @@ A arquitetura baseia-se no modelo **REST**, utilizando os métodos HTTP padrão 
 desenvolvimento e a integração, o projeto conta com o **Swagger**, que gera uma interface interativa para explorar, documentar e testar todos 
 os endpoints da API de forma simplificada.
 
-![hero-image]
+<div align="center">
+  <img src="images/heroimage.png" alt="hero-image" width="450"/>
+</div>
 
 ### Features
 - **Domain-Driven Design (DDD)**: Arquitetura organizada em camadas, com foco na clareza do negócio e facilidade de manutenção.
