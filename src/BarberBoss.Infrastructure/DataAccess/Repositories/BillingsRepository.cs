@@ -37,8 +37,8 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
     {
         var query = _dbContext.Billings.AsNoTracking().AsQueryable();
 
-        if (!string.IsNullOrWhiteSpace(filter.BarberName))
-            query = query.Where(b => b.BarberName.Contains(filter.BarberName.ToLower()));
+        //if (!string.IsNullOrWhiteSpace(filter.BarberName))
+        //    query = query.Where(b => b.BarberName.Contains(filter.BarberName.ToLower()));
 
         if (!string.IsNullOrWhiteSpace(filter.ServiceName))
             query = query.Where(b => b.ServiceName.ToLower().Contains(filter.ServiceName.ToLower()));
@@ -108,7 +108,7 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         var dateOnly = serviceDate.Date;
 
         return await _dbContext.Billings.AnyAsync(b =>
-            b.BarberName.ToLower() == barberName.ToLower() &&
+           // b.BarberName.ToLower() == barberName.ToLower() &&
             b.ClientName.ToLower() == clientName.ToLower() &&
             b.ServiceName.ToLower() == serviceName.ToLower() &&
             b.ServiceDate.Date == dateOnly);

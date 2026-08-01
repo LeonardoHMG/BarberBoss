@@ -38,7 +38,7 @@ public class GenerateBillingsReportExcelUseCase : IGenerateBillingsReportExcelUs
         foreach (var billing in billings)
         {
             worksheet.Cell($"A{row}").Value = billing.ServiceDate;
-            worksheet.Cell($"B{row}").Value = billing.BarberName;
+            worksheet.Cell($"B{row}").Value = "";
             worksheet.Cell($"C{row}").Value = billing.ServiceName;
             worksheet.Cell($"D{row}").Value = billing.ClientName;
             worksheet.Cell($"E{row}").Value = billing.PaymentMethod.ConvertPaymentMethod();

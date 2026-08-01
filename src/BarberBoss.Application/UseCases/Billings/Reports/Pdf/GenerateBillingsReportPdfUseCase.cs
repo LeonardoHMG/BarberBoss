@@ -57,7 +57,7 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
             rowDetailsA.Height = HEIGHT_ROW_BILLING_TABLE;
 
             rowDetailsA.Cells[0].AddParagraph($"Método de pagamento: {billing.PaymentMethod.ConvertPaymentMethod()}");
-            rowDetailsA.Cells[1].AddParagraph($"Barbeiro: {billing.BarberName}");
+            rowDetailsA.Cells[1].AddParagraph($"Barbeiro: ");
             rowDetailsA.Cells[1].Format.Font.Bold = true;
 
             SetStyleBaseForBillingInformation(rowDetailsA.Cells[0]);
