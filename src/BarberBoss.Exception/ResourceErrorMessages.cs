@@ -34,5 +34,10 @@ public static class ResourceErrorMessages
     public const string MAX_AMOUNT_NEGATIVE = "O valor máximo não pode ser negativo.";
     public const string CLIENT_NAME_SEARCH_LENGTH = "O nome do cliente deve ter pelo menos 3 caracteres para a busca.";
 
+    public const string NAME_EMPTY = "O nome não pode estar vazio.";
+    public const string EMAIL_EMPTY = "O e-mail não pode estar vazio.";
+    public const string EMAIL_INVALID = "O e-mail é inválido.";
+    public const string INVALID_PASSWORD = "Sua senha deve ter pelo menos 8 caracteres e incluir pelo menos uma letra maiúscula, uma letra minúscula e um número.";
+
     public const string UNKNOWN_ERROR = "Ocorreu um erro desconhecido. Por favor, tente novamente mais tarde.";
 }
