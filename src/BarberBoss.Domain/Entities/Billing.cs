@@ -5,13 +5,17 @@ public class Billing
 {
     public Guid Id { get; private set; }
     public DateTime ServiceDate { get; set; }
-    public string BarberName { get; set; } = string.Empty;
+
+    public Guid UserId { get; private set; }
+    public User User { get; set; } = default!;
+
     public string ClientName { get; set; } = string.Empty;
     public string ServiceName { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public PaymentStatus Status { get; set; }
     public string? Notes { get; set; }
+
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; set; }
 
@@ -19,7 +23,7 @@ public class Billing
 
     public Billing(
         DateTime serviceDate,
-        string barberName,
+        Guid userId,
         string clientName,
         string serviceName,
         decimal amount,
@@ -29,7 +33,7 @@ public class Billing
     {
         Id = Guid.NewGuid();
         ServiceDate = serviceDate;
-        BarberName = barberName;
+        UserId = userId;
         ClientName = clientName;
         ServiceName = serviceName;
         Amount = amount;
