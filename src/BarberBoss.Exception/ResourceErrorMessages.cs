@@ -37,7 +37,7 @@ public static class ResourceErrorMessages
     public const string NAME_EMPTY = "O nome não pode estar vazio.";
     public const string EMAIL_EMPTY = "O e-mail não pode estar vazio.";
     public const string EMAIL_INVALID = "O e-mail é inválido.";
-    public const string INVALID_PASSWORD = "Sua senha deve ter pelo menos 8 caracteres e incluir pelo menos uma letra maiúscula, uma letra minúscula e um número.";
+    public const string INVALID_PASSWORD = ">Sua senha deve ter no mínimo 8 caracteres, contendo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial (por exemplo, !, ?, *, .).";
 
     public const string UNKNOWN_ERROR = "Ocorreu um erro desconhecido. Por favor, tente novamente mais tarde.";
 }
