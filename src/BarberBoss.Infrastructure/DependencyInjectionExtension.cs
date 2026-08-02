@@ -1,5 +1,6 @@
 ﻿using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.Billings;
+using BarberBoss.Domain.Repositories.User;
 using BarberBoss.Domain.Security.Cryptography;
 using BarberBoss.Infrastructure.DataAccess;
 using BarberBoss.Infrastructure.DataAccess.Repositories;
@@ -24,6 +25,7 @@ public static class DependencyInjectionExtension
         services.AddScoped<IBillingsReadOnlyRepository, BillingsRepository>();
         services.AddScoped<IBillingsWriteOnlyRepository, BillingsRepository>();
         services.AddScoped<IBillingUpdateOnlyRepository, BillingsRepository>();
+        services.AddScoped<IUserReadOnlyRepository, UserRepository>();
     }
 
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
