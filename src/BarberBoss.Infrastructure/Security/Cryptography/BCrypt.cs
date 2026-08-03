@@ -1,7 +1,7 @@
 ﻿using BarberBoss.Domain.Security.Cryptography;
 using BC = BCrypt.Net.BCrypt;
 
-namespace BarberBoss.Infrastructure.Security;
+namespace BarberBoss.Infrastructure.Security.Cryptography;
 
 public class BCrypt : IPasswordEncripter
 {

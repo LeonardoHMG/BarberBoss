@@ -4,6 +4,7 @@ using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.User;
 using BarberBoss.Domain.Security.Cryptography;
+using BarberBoss.Domain.Security.Tokens;
 using BarberBoss.Exception;
 using BarberBoss.Exception.ExceptionsBase;
 using FluentValidation.Results;
@@ -17,18 +18,21 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
     private readonly IUserWriteOnlyRepository _userWriteOnlyRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IAccessTokenGenerator _tokenGenerator;
 
     public RegisterUserUseCase(
         IMapper mapper, 
         IPasswordEncripter passwordEncripter,
         IUserReadOnlyRepository userReadOnlyRepository,
         IUserWriteOnlyRepository userWriteOnlyRepository,
+        IAccessTokenGenerator tokenGenerator,
         IUnitOfWork unitOfWork)
     {
         _mapper = mapper;
         _passwordEncripter = passwordEncripter;
         _userReadOnlyRepository = userReadOnlyRepository;
         _userWriteOnlyRepository = userWriteOnlyRepository;
+        _tokenGenerator = tokenGenerator;
         _unitOfWork = unitOfWork;
     }
 
@@ -46,6 +50,7 @@ public class RegisterUserUseCase : IRegisterUserUseCase
         return new ResponseRegisteredUserJson
         {
             Name = user.Name,
+            Token = _tokenGenerator.Generate(user)
         };
     }
 
