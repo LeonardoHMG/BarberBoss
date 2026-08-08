@@ -1,4 +1,6 @@
 ﻿using BarberBoss.Application.UseCases.Users.Register;
+using BarberBoss.Exception;
+using BarberBoss.Exception.ExceptionsBase;
 using CommonTestUtilities.Cryptography;
 using CommonTestUtilities.Mapper;
 using CommonTestUtilities.Repositories;
@@ -20,6 +22,21 @@ public class RegisterUserUseCaseTest
         result.ShouldNotBeNull();
         result.Name.ShouldBe(request.Name);
         result.Token.ShouldNotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public async Task Error_Name_Empty()
+    {
+        var request = RequestRegisterUserJsonBuilder.Build();
+        request.Name = string.Empty;
+
+        var useCase = CreateUseCase();
+
+        var act = async () => await useCase.Execute(request);
+
+        var exception = await Should.ThrowAsync<ErrorOnValidationException>(act);
+        exception.GetErrors().Count.ShouldBe(1);
+        exception.GetErrors().ShouldContain(ResourceErrorMessages.NAME_EMPTY);
     }
 
     private RegisterUserUseCase CreateUseCase()

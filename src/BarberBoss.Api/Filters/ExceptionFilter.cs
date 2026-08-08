@@ -22,7 +22,7 @@ public class ExceptionFilter : IExceptionFilter
     private void HandleProjectException(ExceptionContext context)
     {
         var barberBossException = (BarberBossException)context.Exception;
-        var errorResponse = new ResponseErrorJson(barberBossException.GetErros());
+        var errorResponse = new ResponseErrorJson(barberBossException.GetErrors());
 
         context.HttpContext.Response.StatusCode = barberBossException.StatusCode;
         context.Result = new ObjectResult(errorResponse);
