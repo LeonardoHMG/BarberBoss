@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\BarberBoss.Application\BarberBoss.Application.csproj" />
     <ProjectReference Include="..\..\src\BarberBoss.Communication\BarberBoss.Communication.csproj" />
   </ItemGroup>
 
