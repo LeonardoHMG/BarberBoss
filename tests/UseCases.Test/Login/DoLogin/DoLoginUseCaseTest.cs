@@ -18,8 +18,9 @@ public class DoLoginUseCaseTest
         var user = UserBuilder.Build();
 
         var request = RequestLoginJsonBuilder.Build();
+        request.Email = user.Email;
 
-        var useCase = CreateUseCase(user);
+        var useCase = CreateUseCase(user, request.Password);
 
         var result = await useCase.Execute(request);
 
@@ -35,7 +36,7 @@ public class DoLoginUseCaseTest
 
         var request = RequestLoginJsonBuilder.Build();
 
-        var useCase = CreateUseCase(user);
+        var useCase = CreateUseCase(user, request.Password);
 
         var act = async () => await useCase.Execute(request);
 
@@ -50,19 +51,20 @@ public class DoLoginUseCaseTest
         var user = UserBuilder.Build();
 
         var request = RequestLoginJsonBuilder.Build();
+        request.Email = user.Email;
 
         var useCase = CreateUseCase(user);
 
         var act = async() => await useCase.Execute(request);
 
-        var exception = await Should.ThrowAsync<ErrorOnValidationException>(act);
+        var exception = await Should.ThrowAsync<InvalidLoginException>(act);
         exception.GetErrors().Count.ShouldBe(1);
         exception.GetErrors().ShouldContain(ResourceErrorMessages.EMAIL_OR_PASSWORD_INVALID);
     }
 
-    private DoLoginUseCase CreateUseCase(User user)
+    private DoLoginUseCase CreateUseCase(User user, string? password = null)
     {
-        var passwordEncripter = PasswordEncripterBuilder.Build();
+        var passwordEncripter = new PasswordEncrypterBuilder().Verify(password).Build();
         var tokenGenerator = JwtTokenGeneratorBuilder.Build();
         var readRepository = new UserReadOnlyRepositoryBuilder().GetUserByEmail(user).Build();
 
