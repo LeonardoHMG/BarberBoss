@@ -5,6 +5,7 @@ using BarberBoss.Domain.Security.Cryptography;
 using BarberBoss.Domain.Security.Tokens;
 using BarberBoss.Infrastructure.DataAccess;
 using BarberBoss.Infrastructure.DataAccess.Repositories;
+using BarberBoss.Infrastructure.Extensions;
 using BarberBoss.Infrastructure.Security.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,11 +16,15 @@ public static class DependencyInjectionExtension
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        AddDbContext(services, configuration);
+        services.AddScoped<IPasswordEncripter, Security.Cryptography.BCrypt>();
+
         AddToken(services, configuration);
         AddRepositories(services);
 
-        services.AddScoped<IPasswordEncripter, Security.Cryptography.BCrypt>();
+        if(configuration.IsTestEnvironment() == false)
+        {
+            AddDbContext(services, configuration);
+        }
     }
 
     private static void AddToken(IServiceCollection services, IConfiguration configuration)
