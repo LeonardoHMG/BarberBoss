@@ -1,4 +1,5 @@
-﻿using CommonTestUtilities.Requests;
+﻿using BarberBoss.Exception;
+using CommonTestUtilities.Requests;
 using Shouldly;
 using System.Net;
 using System.Net.Http.Json;
@@ -32,5 +33,24 @@ public class RegisterUserTest : IClassFixture<CustomWebApplicationFactory>
         response.RootElement.GetProperty("name").GetString().ShouldBe(request.Name);
 
         response.RootElement.GetProperty("token").GetString().ShouldNotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Error_Empty_Name()
+    {
+        var request = RequestRegisterUserJsonBuilder.Build();
+        request.Name = string.Empty;
+
+        var result = await _httpClient.PostAsJsonAsync(METHOD, request);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        var body = await result.Content.ReadAsStreamAsync();
+
+        var response = await JsonDocument.ParseAsync(body);
+
+        var errors = response.RootElement.GetProperty("errorMessages").EnumerateArray();
+
+        errors.ShouldHaveSingleItem().GetString()!.ShouldBe(ResourceErrorMessages.NAME_EMPTY);
     }
 }
