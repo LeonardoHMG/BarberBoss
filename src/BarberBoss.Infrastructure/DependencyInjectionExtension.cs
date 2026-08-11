@@ -3,10 +3,12 @@ using BarberBoss.Domain.Repositories.Billings;
 using BarberBoss.Domain.Repositories.User;
 using BarberBoss.Domain.Security.Cryptography;
 using BarberBoss.Domain.Security.Tokens;
+using BarberBoss.Domain.Services.LoggedUser;
 using BarberBoss.Infrastructure.DataAccess;
 using BarberBoss.Infrastructure.DataAccess.Repositories;
 using BarberBoss.Infrastructure.Extensions;
 using BarberBoss.Infrastructure.Security.Tokens;
+using BarberBoss.Infrastructure.Services.LoggedUser;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,7 @@ public static class DependencyInjectionExtension
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IPasswordEncripter, Security.Cryptography.BCrypt>();
+        services.AddScoped<ILoggedUser, LoggedUser>();
 
         AddToken(services, configuration);
         AddRepositories(services);

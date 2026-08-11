@@ -1,4 +1,5 @@
 ﻿using BarberBoss.Domain.Entities;
+using BarberBoss.Domain.Security.Tokens;
 using BarberBoss.Domain.Services.LoggedUser;
 using BarberBoss.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +10,17 @@ namespace BarberBoss.Infrastructure.Services.LoggedUser;
 internal class LoggedUser : ILoggedUser
 {
     private readonly BarberBossDbContext _dbContext;
+    private readonly ITokenProvider _tokenProvider;
 
-    public LoggedUser(BarberBossDbContext dbContext) => _dbContext = dbContext;
+    public LoggedUser(BarberBossDbContext dbContext, ITokenProvider tokenProvider)
+    {
+       _dbContext = dbContext;
+       _tokenProvider = tokenProvider;
+    }
 
     public async Task<User> Get()
     {
-        string token = "token";
+        string token = _tokenProvider.TokenOnRequest();
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
