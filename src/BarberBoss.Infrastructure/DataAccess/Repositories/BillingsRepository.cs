@@ -93,9 +93,10 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         return await _dbContext.Billings.AsNoTracking().FirstOrDefaultAsync(billing => billing.Id == id);
     }
 
-    async Task<Billing?> IBillingUpdateOnlyRepository.GetById(Guid id)
+    async Task<Billing?> IBillingUpdateOnlyRepository.GetById(User user, Guid id)
     {
-        return await _dbContext.Billings.FirstOrDefaultAsync(billing => billing.Id == id);
+        return await _dbContext.Billings
+            .FirstOrDefaultAsync(billing => billing.Id == id && billing.UserId == user.Id);
     }
 
     public void Update(Billing billing)
@@ -103,15 +104,15 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         _dbContext.Billings.Update(billing);
     }
 
-    public async Task<bool> Exists(string barberName, string clientName, string serviceName, DateTime serviceDate)
+    public async Task<bool> Exists(Guid userId, string clientName, string serviceName, DateTime serviceDate)
     {
         var dateOnly = serviceDate.Date;
 
         return await _dbContext.Billings.AnyAsync(b =>
-           // b.BarberName.ToLower() == barberName.ToLower() &&
-            b.ClientName.ToLower() == clientName.ToLower() &&
-            b.ServiceName.ToLower() == serviceName.ToLower() &&
-            b.ServiceDate.Date == dateOnly);
+        b.UserId == userId &&
+        b.ClientName.ToLower() == clientName.ToLower() &&
+        b.ServiceName.ToLower() == serviceName.ToLower() &&
+        b.ServiceDate.Date == dateOnly);
     }
 
     public async Task<List<Billing>> FilterByWeek(DateTime startDate, DateTime endDate)

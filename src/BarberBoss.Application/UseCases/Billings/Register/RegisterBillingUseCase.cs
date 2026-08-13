@@ -4,6 +4,7 @@ using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Entities;
 using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.Billings;
+using BarberBoss.Domain.Services.LoggedUser;
 using BarberBoss.Exception;
 using BarberBoss.Exception.ExceptionsBase;
 
@@ -15,31 +16,41 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
     private readonly IBillingsReadOnlyRepository _readOnlyRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly ILoggedUser _loggedUser;
 
-    public RegisterBillingUseCase(IBillingsWriteOnlyRepository writeOnlyRepository, IBillingsReadOnlyRepository readOnlyRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public RegisterBillingUseCase(
+        IBillingsWriteOnlyRepository writeOnlyRepository, 
+        IBillingsReadOnlyRepository readOnlyRepository, 
+        IUnitOfWork unitOfWork, 
+        IMapper mapper, 
+        ILoggedUser loggedUser)
     {
         _writeOnlyRepository = writeOnlyRepository;
         _readOnlyRepository = readOnlyRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _loggedUser = loggedUser;
     }
 
     public async Task<ResponseRegisterBillingJson> Execute(RequestBillingJson request)
     {
         Validate(request);
 
-        var exists = await _readOnlyRepository.Exists(request.BarberName, request.ClientName, request.ServiceName, request.ServiceDate);
+        var loggedUser = await _loggedUser.Get();
+
+        var exists = await _readOnlyRepository.Exists(loggedUser.Id, request.ClientName, request.ServiceName, request.ServiceDate);
 
         if (exists)
             throw new ConflictException(ResourceErrorMessages.BILLING_ALREADY_EXISTS);
+       
+        var billing = _mapper.Map<Billing>(request);
+        billing.UserId = loggedUser.Id;
 
-        var entity = _mapper.Map<Billing>(request);
-
-        await _writeOnlyRepository.Add(entity);
+        await _writeOnlyRepository.Add(billing);
 
         await _unitOfWork.Commit();
 
-        return _mapper.Map<ResponseRegisterBillingJson>(entity);
+        return _mapper.Map<ResponseRegisterBillingJson>(billing);
     }
 
     private void Validate(RequestBillingJson request)

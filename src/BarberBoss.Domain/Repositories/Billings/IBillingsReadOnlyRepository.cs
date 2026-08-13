@@ -5,6 +5,6 @@ public interface IBillingsReadOnlyRepository
 {
     Task<(List<Billing> Items, int TotalCount)> GetAll(BillingFilter filter);
     Task<Billing?> GetById(Guid id);
-    Task<bool> Exists(string barberName, string clientName, string serviceName, DateTime serviceDate);
+    Task<bool> Exists(Guid userId, string clientName, string serviceName, DateTime serviceDate);
     Task<List<Billing>> FilterByWeek(DateTime startDate, DateTime endDate);
 }

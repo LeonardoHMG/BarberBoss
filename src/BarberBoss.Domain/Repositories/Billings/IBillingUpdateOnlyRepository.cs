@@ -3,6 +3,6 @@
 namespace BarberBoss.Domain.Repositories.Billings;
 public interface IBillingUpdateOnlyRepository
 {
-    Task<Billing?> GetById(Guid id);
+    Task<Billing?> GetById(Entities.User user, Guid id);
     void Update(Billing billing);
 }

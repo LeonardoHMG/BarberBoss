@@ -18,10 +18,6 @@ public class BillingValidator : AbstractValidator<RequestBillingJson>
         RuleFor(billing => billing.ServiceDate.Hour)
             .InclusiveBetween(6, 23).WithMessage(ResourceErrorMessages.SERVICE_HOUR_INVALID);
 
-        RuleFor(billing => billing.BarberName)
-            .NotEmpty().WithMessage(ResourceErrorMessages.BARBER_NAME_REQUIRED)
-            .Length(2, 80).WithMessage(ResourceErrorMessages.BARBER_NAME_LENGTH);
-
         RuleFor(billing => billing.ClientName)
             .NotEmpty().WithMessage(ResourceErrorMessages.CLIENT_NAME_REQUIRED)
             .Length(2, 120).WithMessage(ResourceErrorMessages.CLIENT_NAME_LENGTH);

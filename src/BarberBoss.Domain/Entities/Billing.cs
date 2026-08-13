@@ -3,10 +3,10 @@
 namespace BarberBoss.Domain.Entities;
 public class Billing
 {
-    public Guid Id { get; private set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public DateTime ServiceDate { get; set; }
 
-    public Guid UserId { get; private set; }
+    public Guid UserId { get; set; }
     public User User { get; set; } = default!;
 
     public string ClientName { get; set; } = string.Empty;
@@ -16,33 +16,6 @@ public class Billing
     public PaymentStatus Status { get; set; }
     public string? Notes { get; set; }
 
-    public DateTime CreatedAt { get; private set; }
-    public DateTime UpdatedAt { get; set; }
-
-    protected Billing() { }
-
-    public Billing(
-        DateTime serviceDate,
-        Guid userId,
-        string clientName,
-        string serviceName,
-        decimal amount,
-        PaymentMethod paymentMethod,
-        PaymentStatus status,
-        string? notes = null)
-    {
-        Id = Guid.NewGuid();
-        ServiceDate = serviceDate;
-        UserId = userId;
-        ClientName = clientName;
-        ServiceName = serviceName;
-        Amount = amount;
-        PaymentMethod = paymentMethod;
-        Status = status;
-        Notes = notes;
-
-        var now = DateTime.Now;
-        CreatedAt = now;
-        UpdatedAt = now;
-    }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
