@@ -28,15 +28,18 @@ public class AutoMapping: Profile
     private void EntityToResponse()
     {
         CreateMap<Billing, ResponseRegisterBillingJson>();
-        CreateMap<Billing, ResponseShortBillingJson>();
-        CreateMap<Billing, ResponseBillingJson>();
+        
+        CreateMap<Billing, ResponseShortBillingJson>()
+        .ForMember(dest => dest.BarberName, opt => opt.MapFrom(src => src.User.Name));
+        
+        CreateMap<Billing, ResponseBillingJson>()
+        .ForMember(dest => dest.BarberName, opt => opt.MapFrom(src => src.User.Name));
     }
 
     private void RequestToFilter()
     {
         CreateMap<RequestGetBillingsJson, BillingFilter>()
             .ConstructUsing(src => new BillingFilter(
-                src.BarberName,
                 src.ServiceName,
                 src.ClientName,
                 src.StartDate,
@@ -45,6 +48,7 @@ public class AutoMapping: Profile
                 src.MaxAmount.HasValue ? src.MaxAmount.Value : 0,
                 src.Status.HasValue ? (Domain.Enums.PaymentStatus)src.Status.Value : null,
                 src.PaymentMethod.HasValue ? (Domain.Enums.PaymentMethod)src.PaymentMethod.Value : null,
+                src.BarberName,
                 src.PageNumber,
                 src.PageSize,
                 src.OrderBy,

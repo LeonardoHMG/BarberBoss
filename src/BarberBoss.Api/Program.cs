@@ -5,6 +5,7 @@ using BarberBoss.Domain.Security.Tokens;
 using BarberBoss.Infrastructure;
 using BarberBoss.Infrastructure.Extensions;
 using BarberBoss.Infrastructure.Migrations;
+using BarberBoss.Infrastructure.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -96,6 +97,7 @@ app.MapControllers();
 if (builder.Configuration.IsTestEnvironment() == false)
 {
     await MigrateDatabase();
+    await SeedAdmin();
 }
 
 app.Run();
@@ -105,6 +107,12 @@ async Task MigrateDatabase()
     await using var scope = app.Services.CreateAsyncScope();
 
     await DataBaseMigration.MigrateDatabase(scope.ServiceProvider);
+}
+
+async Task SeedAdmin()
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    await DatabaseSeeder.SeedAdminUser(scope.ServiceProvider, builder.Configuration);
 }
 
 public partial class Program { }

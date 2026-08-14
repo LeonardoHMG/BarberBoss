@@ -41,5 +41,7 @@ public static class ResourceErrorMessages
     public const string EMAIL_ALREADY_REGISTERED = "Esse e-mail já está sendo usado.";
     public const string EMAIL_OR_PASSWORD_INVALID = "E-mail e/ou senha inválidos.";
 
+    public const string ADMIN_CANNOT_REGISTER_BILLING = "Administradores não podem registrar faturamento.";
+
     public const string UNKNOWN_ERROR = "Ocorreu um erro desconhecido. Por favor, tente novamente mais tarde.";
 }

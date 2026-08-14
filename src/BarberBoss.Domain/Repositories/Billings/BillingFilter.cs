@@ -2,7 +2,6 @@
 
 namespace BarberBoss.Domain.Repositories.Billings;
 public record BillingFilter(
-    string? BarberName,
     string? ServiceName,
     string? ClientName,
     DateOnly? StartDate,
@@ -11,6 +10,7 @@ public record BillingFilter(
     decimal? MaxAmount,
     PaymentStatus? Status,
     PaymentMethod? PaymentMethod,
+    string? BarberName,
     int PageNumber,
     int PageSize,
     string OrderBy,

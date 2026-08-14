@@ -7,7 +7,6 @@ public class RequestRegisterBillingJsonBuilder
 {
     public static RequestBillingJson Build()
     {
-        List<string> _barbers = ["John's Barber Shop", "Heritage Barbershop", "Royal Cut & Shave", "Old Town Barbers"];
         List<string> _services = ["beard", "hair", "hair and beard", "hair and eyebrow", "Kids' haircut"];
 
         return new Faker<RequestBillingJson>()
@@ -17,7 +16,6 @@ public class RequestRegisterBillingJsonBuilder
               
                 return new DateTime(date.Year, date.Month, date.Day, faker.Random.Int(6, 23), faker.Random.Int(0, 59), 0);
             })
-            .RuleFor(r => r.BarberName, faker => faker.PickRandom(_barbers))
             .RuleFor(r => r.ClientName, faker => faker.Person.FullName)
             .RuleFor(r => r.ServiceName, faker => faker.PickRandom(_services))
             .RuleFor(r => r.Status, f => f.PickRandom<PaymentStatus>())

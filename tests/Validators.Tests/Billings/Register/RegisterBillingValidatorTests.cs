@@ -79,25 +79,6 @@ public class RegisterBillingValidatorTests
     }
 
     [Theory]
-    [InlineData("A")]
-    [InlineData("Alexander James Maximilian Frederick Christopher Leopold Constantine von Hohenzollern-Sigmaringen III")]
-    public void Error_Barber_Name_Invalid(string barberName)
-    {
-        var validator = new BillingValidator();
-        var request = RequestRegisterBillingJsonBuilder.Build();
-        request.BarberName = barberName;
-
-        var result = validator.Validate(request);
-
-        result.IsValid.ShouldBeFalse();
-        result.Errors.ShouldSatisfyAllConditions(errors =>
-        {
-            errors.Count.ShouldBe(1);
-            errors.ShouldContain(error => error.ErrorMessage.Equals(ResourceErrorMessages.BARBER_NAME_LENGTH));
-        });
-    }
-
-    [Theory]
     [InlineData("B")]
     [InlineData("Premium Executive Grooming Experience: Full Haircut, Hot Towel Shave, Beard Sculpture, Charcoal Face Mask and Relaxing Scalp Massage")]
     public void Error_Service_Name_Invalid(string serviceName)

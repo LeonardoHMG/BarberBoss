@@ -2,6 +2,7 @@
 using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Entities;
+using BarberBoss.Domain.Enums;
 using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.Billings;
 using BarberBoss.Domain.Services.LoggedUser;
@@ -34,9 +35,12 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
 
     public async Task<ResponseRegisterBillingJson> Execute(RequestBillingJson request)
     {
-        Validate(request);
-
         var loggedUser = await _loggedUser.Get();
+
+        if (loggedUser.Role == Roles.ADMIN)
+            throw new ForbiddenException(ResourceErrorMessages.ADMIN_CANNOT_REGISTER_BILLING);
+
+        Validate(request);
 
         var exists = await _readOnlyRepository.Exists(loggedUser.Id, request.ClientName, request.ServiceName, request.ServiceDate);
 

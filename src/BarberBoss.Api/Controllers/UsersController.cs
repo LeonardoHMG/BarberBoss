@@ -1,6 +1,8 @@
 ﻿using BarberBoss.Application.UseCases.Users.Register;
 using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
+using BarberBoss.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BarberBoss.Api.Controllers;
@@ -10,6 +12,7 @@ namespace BarberBoss.Api.Controllers;
 public class UsersController : ControllerBase
 {
     [HttpPost]
+    [Authorize(Roles = Roles.ADMIN)]
     [ProducesResponseType(typeof(ResponseRegisteredUserJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(
