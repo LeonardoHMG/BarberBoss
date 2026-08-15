@@ -123,6 +123,7 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
     public async Task<List<Billing>> FilterByWeek(DateTime startDate, DateTime endDate)
     {
         return await _dbContext.Billings
+            .Include(b => b.User)
             .AsNoTracking()
             .Where(b => b.ServiceDate >= startDate && b.ServiceDate <= endDate && b.Status == PaymentStatus.Paid)
             .OrderBy(b => b.ServiceDate)
