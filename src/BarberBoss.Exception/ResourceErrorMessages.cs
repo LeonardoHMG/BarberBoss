@@ -43,5 +43,8 @@ public static class ResourceErrorMessages
 
     public const string ADMIN_CANNOT_REGISTER_BILLING = "Administradores não podem registrar faturamento.";
 
+    public const string UNAUTHORIZED = "Token inválido ou não informado. Faça login novamente.";
+    public const string FORBIDDEN = "Você não tem permissão para acessar este recurso.";
+
     public const string UNKNOWN_ERROR = "Ocorreu um erro desconhecido. Por favor, tente novamente mais tarde.";
 }
