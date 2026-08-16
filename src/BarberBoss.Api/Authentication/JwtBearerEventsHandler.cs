@@ -16,6 +16,11 @@ public static class JwtBearerEventsHandler
         };
     }
 
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
     private static async Task OnChallenge(JwtBearerChallengeContext context)
     {
         context.HandleResponse();
@@ -25,7 +30,7 @@ public static class JwtBearerEventsHandler
 
         var errorResponse = new ResponseErrorJson(ResourceErrorMessages.UNAUTHORIZED);
 
-        await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
+        await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse, _jsonOptions));
     }
 
     private static async Task OnForbidden(ForbiddenContext context)
@@ -35,6 +40,6 @@ public static class JwtBearerEventsHandler
 
         var errorResponse = new ResponseErrorJson(ResourceErrorMessages.FORBIDDEN);
 
-        await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
+        await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse, _jsonOptions));
     }
 }

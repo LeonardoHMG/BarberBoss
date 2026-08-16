@@ -19,9 +19,9 @@ public class DoLoginTest: IClassFixture<CustomWebApplicationFactory>
     public DoLoginTest(CustomWebApplicationFactory webApplicationFactory)
     {
         _httpClient = webApplicationFactory.CreateClient();
-        _email = webApplicationFactory.GetEmail();
-        _name = webApplicationFactory.GetName();
-        _password = webApplicationFactory.GetPassword();
+        _email = webApplicationFactory.Barber.GetEmail();
+        _name = webApplicationFactory.Barber.GetName();
+        _password = webApplicationFactory.Barber.GetPassword();
     }
 
     [Fact]

@@ -34,7 +34,7 @@ public class DoLoginUseCaseTest
     {
         var user = UserBuilder.Build();
 
-        var request = RequestLoginJsonBuilder.Build();
+        var request = RequestLoginJsonBuilder.Build();  // email gerado aleatoriamente, diferente do `user`
 
         var useCase = CreateUseCase(user, request.Password);
 

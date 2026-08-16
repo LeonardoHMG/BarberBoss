@@ -1,4 +1,5 @@
 ﻿using BarberBoss.Domain.Entities;
+using BarberBoss.Domain.Enums;
 using BarberBoss.Domain.Security.Cryptography;
 using BarberBoss.Infrastructure.DataAccess;
 using CommonTestUtilities.Entities;
@@ -6,12 +7,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using WebApi.Test.Resources;
 
 namespace WebApi.Test;
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
-    private User _user;
-    private string _password;
+    public UserCredentials Barber { get; private set; } = default!;
+    public UserCredentials Admin { get; private set; } = default!;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -34,18 +36,17 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             });
     }
 
-    public string GetName() => _user.Name;
-    public string GetEmail() => _user.Email;
-    public string GetPassword() => _password;
-
     private void StartDatabase(BarberBossDbContext dbContext, IPasswordEncripter passwordEncripter)
     {
-        _user = UserBuilder.Build();
-        _password = _user.PasswordHash;
+        var barber = UserBuilder.Build();
+        Barber = new UserCredentials(name: barber.Name, email: barber.Email, password: barber.PasswordHash);
+        barber.PasswordHash = passwordEncripter.Encrypt(barber.PasswordHash);
+        dbContext.Users.Add(barber);
 
-        _user.PasswordHash = passwordEncripter.Encrypt(_user.PasswordHash);
-
-        dbContext.Users.Add(_user);
+        var admin = UserBuilder.Build(Roles.ADMIN);
+        Admin = new UserCredentials(name: admin.Name, email: admin.Email, password: admin.PasswordHash);
+        admin.PasswordHash = passwordEncripter.Encrypt(admin.PasswordHash);
+        dbContext.Users.Add(admin);
 
         dbContext.SaveChanges();
     }
