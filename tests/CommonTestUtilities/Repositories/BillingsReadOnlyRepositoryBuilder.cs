@@ -1,4 +1,5 @@
-﻿using BarberBoss.Domain.Repositories.Billings;
+﻿using BarberBoss.Domain.Entities;
+using BarberBoss.Domain.Repositories.Billings;
 using Moq;
 
 namespace CommonTestUtilities.Repositories;
@@ -16,6 +17,15 @@ public class BillingsReadOnlyRepositoryBuilder
         _repository
             .Setup(repo => repo.Exists(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
             .ReturnsAsync(result);
+
+        return this;
+    }
+
+    public BillingsReadOnlyRepositoryBuilder GetAll(User user, List<Billing> billings, int? totalCount = null)
+    {
+        _repository
+            .Setup(repo => repo.GetAll(user, It.IsAny<BillingFilter>()))
+            .ReturnsAsync((billings, totalCount ?? billings.Count));
 
         return this;
     }

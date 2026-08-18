@@ -12,7 +12,7 @@ using CommonTestUtilities.Requests;
 using Moq;
 using Shouldly;
 
-namespace UseCases.Test.Billings;
+namespace UseCases.Test.Billings.Register;
 public class RegisterBillingUseCaseTest
 {
     [Fact]
