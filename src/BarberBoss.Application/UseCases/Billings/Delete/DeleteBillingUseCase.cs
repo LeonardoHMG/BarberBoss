@@ -5,7 +5,6 @@ using BarberBoss.Exception;
 using BarberBoss.Exception.ExceptionsBase;
 
 namespace BarberBoss.Application.UseCases.Billings.Delete;
-
 public class DeleteBillingUseCase : IDeleteBillingUseCase
 {
     private readonly IBillingsReadOnlyRepository _readRepository;
