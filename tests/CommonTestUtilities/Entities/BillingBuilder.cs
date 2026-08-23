@@ -23,6 +23,7 @@ public class BillingBuilder
             .RuleFor(b => b.Id, _ => Guid.NewGuid())
             .RuleFor(b => b.ServiceDate, faker => faker.Date.Recent(30))
             .RuleFor(b => b.UserId, _ => user.Id)
+            .RuleFor(b => b.User, _ => user)
             .RuleFor(b => b.ClientName, faker => faker.Person.FullName)
             .RuleFor(b => b.ServiceName, faker => string.IsNullOrWhiteSpace(serviceName)
                 ? faker.PickRandom(services)

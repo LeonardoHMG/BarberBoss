@@ -30,5 +30,14 @@ public class BillingsReadOnlyRepositoryBuilder
         return this;
     }
 
+    public BillingsReadOnlyRepositoryBuilder GetById(User user, Billing? billing)
+    {
+        if (billing is not null)
+            _repository.Setup(repo => repo.GetById(user,  billing.Id)).ReturnsAsync(billing);
+        return this;
+    }
+
+    public Mock<IBillingsReadOnlyRepository> MockRepository => _repository;
+
     public IBillingsReadOnlyRepository Build() => _repository.Object;
 }
