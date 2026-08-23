@@ -33,7 +33,7 @@ public static class HttpClientAuthExtensions
 
     public static async Task<Guid> RegisterBillingAsync(this HttpClient httpClient, string serviceName, string route = "api/Billings")
     {
-        var request = RequestRegisterBillingJsonBuilder.Build(serviceName);
+        var request = RequestBillingJsonBuilder.Build(serviceName);
         var result = await httpClient.PostAsJsonAsync(route, request);
 
         var body = await result.Content.ReadAsStreamAsync();

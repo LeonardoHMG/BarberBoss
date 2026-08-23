@@ -12,13 +12,13 @@ public class UpdateBillingUseCase : IUpdateBillingUseCase
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IBillingUpdateOnlyRepository _repository;
+    private readonly IBillingsUpdateOnlyRepository _repository;
     private readonly ILoggedUser _loggedUser;
 
     public UpdateBillingUseCase(
         IMapper mapper, 
         IUnitOfWork unitOfWork, 
-        IBillingUpdateOnlyRepository repository,
+        IBillingsUpdateOnlyRepository repository,
         ILoggedUser loggedUser)
     {
         _mapper = mapper;
@@ -42,7 +42,7 @@ public class UpdateBillingUseCase : IUpdateBillingUseCase
 
         _mapper.Map(request, billing);
 
-        billing.UpdatedAt = DateTime.Now;
+        billing.UpdatedAt = DateTime.UtcNow;
 
         _repository.Update(billing);
 

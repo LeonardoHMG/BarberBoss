@@ -35,7 +35,7 @@ public class RegisterBillingTest : IClassFixture<CustomWebApplicationFactory>
     {
         await _httpClient.AuthenticateAsync(_emailBarber, _passwordBarber);
 
-        var request = RequestRegisterBillingJsonBuilder.Build("beard");
+        var request = RequestBillingJsonBuilder.Build("beard");
 
         var result = await _httpClient.PostAsJsonAsync(METHOD, request);
 
@@ -54,7 +54,7 @@ public class RegisterBillingTest : IClassFixture<CustomWebApplicationFactory>
     {
         await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
 
-        var request = RequestRegisterBillingJsonBuilder.Build("hair");
+        var request = RequestBillingJsonBuilder.Build("hair");
 
         var result = await _httpClient.PostAsJsonAsync(METHOD, request);
 
@@ -72,7 +72,7 @@ public class RegisterBillingTest : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task Error_Without_Token()
     {
-        var request = RequestRegisterBillingJsonBuilder.Build("hair and beard");
+        var request = RequestBillingJsonBuilder.Build("hair and beard");
 
         var result = await _httpClient.PostAsJsonAsync(METHOD, request);
 
@@ -92,7 +92,7 @@ public class RegisterBillingTest : IClassFixture<CustomWebApplicationFactory>
     {
         await _httpClient.AuthenticateAsync(_emailBarber, _passwordBarber);
 
-        var request = RequestRegisterBillingJsonBuilder.Build();
+        var request = RequestBillingJsonBuilder.Build();
         request.ServiceName = string.Empty;
 
         var result = await _httpClient.PostAsJsonAsync(METHOD, request);
@@ -112,7 +112,7 @@ public class RegisterBillingTest : IClassFixture<CustomWebApplicationFactory>
     {
         await _httpClient.AuthenticateAsync(_emailBarber, _passwordBarber);
 
-        var request = RequestRegisterBillingJsonBuilder.Build("hair and eyebrow");
+        var request = RequestBillingJsonBuilder.Build("hair and eyebrow");
 
         var firstResult = await _httpClient.PostAsJsonAsync(METHOD, request);
         firstResult.StatusCode.ShouldBe(HttpStatusCode.Created);

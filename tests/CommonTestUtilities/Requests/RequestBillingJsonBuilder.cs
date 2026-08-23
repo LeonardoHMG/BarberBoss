@@ -3,7 +3,7 @@ using BarberBoss.Communication.Requests;
 using Bogus;
 
 namespace CommonTestUtilities.Requests;
-public class RequestRegisterBillingJsonBuilder
+public class RequestBillingJsonBuilder
 {
     public static RequestBillingJson Build(string? serviceName = null, PaymentStatus status = PaymentStatus.Paid)
     {

@@ -19,7 +19,7 @@ public class RegisterBillingUseCaseTest
     public async Task Success()
     {
         var loggedUser = UserBuilder.Build();
-        var request = RequestRegisterBillingJsonBuilder.Build();
+        var request = RequestBillingJsonBuilder.Build();
         var useCase = CreateUseCase(loggedUser);
 
         var result = await useCase.Execute(request);
@@ -35,7 +35,7 @@ public class RegisterBillingUseCaseTest
     public async Task Success_Assigns_LoggedUser_Id()
     {
         var loggedUser = UserBuilder.Build();
-        var request = RequestRegisterBillingJsonBuilder.Build();
+        var request = RequestBillingJsonBuilder.Build();
 
         var (useCase, writeRepositoryMock) = CreateUseCaseWithMock(loggedUser);
 
@@ -50,7 +50,7 @@ public class RegisterBillingUseCaseTest
     public async Task Error_Admin_Cannot_Register()
     {
         var admin = UserBuilder.Build(Roles.ADMIN);
-        var request = RequestRegisterBillingJsonBuilder.Build();
+        var request = RequestBillingJsonBuilder.Build();
         var useCase = CreateUseCase(admin);
 
         var act = async () => await useCase.Execute(request);
@@ -64,7 +64,7 @@ public class RegisterBillingUseCaseTest
     public async Task Error_Billing_Already_Exists()
     {
         var loggedUser = UserBuilder.Build();
-        var request = RequestRegisterBillingJsonBuilder.Build();
+        var request = RequestBillingJsonBuilder.Build();
         var useCase = CreateUseCase(loggedUser, exists: true);
 
         var act = async () => await useCase.Execute(request);
@@ -79,7 +79,7 @@ public class RegisterBillingUseCaseTest
     {
         var loggedUser = UserBuilder.Build();
 
-        var request = RequestRegisterBillingJsonBuilder.Build();
+        var request = RequestBillingJsonBuilder.Build();
         request.ServiceName = string.Empty;
 
         var useCase = CreateUseCase(loggedUser);
@@ -95,7 +95,7 @@ public class RegisterBillingUseCaseTest
     public async Task Error_Admin_Cannot_Register_Even_With_Invalid_Data()
     {
         var admin = UserBuilder.Build(Roles.ADMIN);
-        var request = RequestRegisterBillingJsonBuilder.Build();
+        var request = RequestBillingJsonBuilder.Build();
         request.ServiceName = string.Empty; 
 
         var useCase = CreateUseCase(admin);

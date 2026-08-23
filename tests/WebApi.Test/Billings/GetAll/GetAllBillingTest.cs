@@ -33,7 +33,7 @@ public class GetAllBillingTest : IClassFixture<CustomWebApplicationFactory>
     {
         await _httpClient.AuthenticateAsync(_emailBarber, _passwordBarber);
 
-        var registerRequest = RequestRegisterBillingJsonBuilder.Build("hair");
+        var registerRequest = RequestBillingJsonBuilder.Build("hair");
         await _httpClient.PostAsJsonAsync(METHOD, registerRequest);
 
         var result = await _httpClient.GetAsync(METHOD);
@@ -54,7 +54,7 @@ public class GetAllBillingTest : IClassFixture<CustomWebApplicationFactory>
     {
         await _httpClient.AuthenticateAsync(_emailBarber, _passwordBarber);
 
-        var registerRequest = RequestRegisterBillingJsonBuilder.Build("hair and eyebrow");
+        var registerRequest = RequestBillingJsonBuilder.Build("hair and eyebrow");
         await _httpClient.PostAsJsonAsync(METHOD, registerRequest);
 
         await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
@@ -75,7 +75,7 @@ public class GetAllBillingTest : IClassFixture<CustomWebApplicationFactory>
         await _httpClient.AuthenticateAsync(_emailBarber, _passwordBarber);
 
         var uniqueServiceName = "Special Test Cut";
-        var registerRequest = RequestRegisterBillingJsonBuilder.Build(uniqueServiceName);
+        var registerRequest = RequestBillingJsonBuilder.Build(uniqueServiceName);
         await _httpClient.PostAsJsonAsync("api/Billings", registerRequest);
 
         var result = await _httpClient.GetAsync($"{METHOD}?serviceName={Uri.EscapeDataString(uniqueServiceName)}");
