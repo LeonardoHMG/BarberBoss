@@ -12,7 +12,7 @@ public class ErrorOnValidationException : BarberBossException
         _errors = errorMessages; 
     }
 
-    public override List<string> GetErros()
+    public override List<string> GetErrors()
     {
         return _errors;
     }

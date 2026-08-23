@@ -9,4 +9,5 @@ public class ResponseShortBillingJson
     public string ServiceName { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; }
+    public string BarberName { get; set; } = string.Empty;
 }

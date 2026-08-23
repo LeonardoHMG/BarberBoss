@@ -34,5 +34,17 @@ public static class ResourceErrorMessages
     public const string MAX_AMOUNT_NEGATIVE = "O valor máximo não pode ser negativo.";
     public const string CLIENT_NAME_SEARCH_LENGTH = "O nome do cliente deve ter pelo menos 3 caracteres para a busca.";
 
+    public const string NAME_EMPTY = "O nome não pode estar vazio.";
+    public const string EMAIL_EMPTY = "O e-mail não pode estar vazio.";
+    public const string EMAIL_INVALID = "O e-mail é inválido.";
+    public const string INVALID_PASSWORD = "Sua senha deve ter no mínimo 8 caracteres, contendo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial (por exemplo, !, ?, *, .).";
+    public const string EMAIL_ALREADY_REGISTERED = "Esse e-mail já está sendo usado.";
+    public const string EMAIL_OR_PASSWORD_INVALID = "E-mail e/ou senha inválidos.";
+
+    public const string ADMIN_CANNOT_REGISTER_BILLING = "Administradores não podem registrar faturamento.";
+
+    public const string UNAUTHORIZED = "Token inválido ou não informado. Faça login novamente.";
+    public const string FORBIDDEN = "Você não tem permissão para acessar este recurso.";
+
     public const string UNKNOWN_ERROR = "Ocorreu um erro desconhecido. Por favor, tente novamente mais tarde.";
 }

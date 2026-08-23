@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BarberBoss.Infrastructure.DataAccess.Repositories;
 
-internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteOnlyRepository, IBillingUpdateOnlyRepository
+internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteOnlyRepository, IBillingsUpdateOnlyRepository
 {
     private readonly BarberBossDbContext _dbContext;
 
@@ -19,27 +19,20 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         await _dbContext.Billings.AddAsync(billing);
     }
 
-    public async Task<bool> Delete(Guid id)
+    public async Task Delete(Guid id)
     {
-        var result = await _dbContext.Billings.FirstOrDefaultAsync(billing => billing.Id == id);
+        var result = await _dbContext.Billings.FindAsync(id);
 
-        if (result is null)
-        {
-            return false;
-        }
-
-        _dbContext.Billings.Remove(result);
-
-        return true;
+        _dbContext.Billings.Remove(result!);
     }
 
-    public async Task<(List<Billing> Items, int TotalCount)> GetAll(BillingFilter filter)
+    public async Task<(List<Billing> Items, int TotalCount)> GetAll(User user,BillingFilter filter)
     {
-        var query = _dbContext.Billings.AsNoTracking().AsQueryable();
+        var query = _dbContext.Billings.Include(b => b.User).AsNoTracking().AsQueryable();
 
-        if (!string.IsNullOrWhiteSpace(filter.BarberName))
-            query = query.Where(b => b.BarberName.Contains(filter.BarberName.ToLower()));
-
+        if (user.Role != Roles.ADMIN)
+        query = query.Where(b => b.UserId == user.Id);
+        
         if (!string.IsNullOrWhiteSpace(filter.ServiceName))
             query = query.Where(b => b.ServiceName.ToLower().Contains(filter.ServiceName.ToLower()));
 
@@ -88,14 +81,27 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         return (items, totalCount);
     }
 
-    async Task<Billing?> IBillingsReadOnlyRepository.GetById(Guid id)
+    async Task<Billing?> IBillingsReadOnlyRepository.GetById(User user, Guid id)
     {
-        return await _dbContext.Billings.AsNoTracking().FirstOrDefaultAsync(billing => billing.Id == id);
+        var query = _dbContext.Billings
+            .Include(b => b.User)
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (user.Role != Roles.ADMIN)
+            query = query.Where(b => b.UserId == user.Id);
+
+        return await query.FirstOrDefaultAsync(b => b.Id == id);
     }
 
-    async Task<Billing?> IBillingUpdateOnlyRepository.GetById(Guid id)
+    async Task<Billing?> IBillingsUpdateOnlyRepository.GetById(User user, Guid id)
     {
-        return await _dbContext.Billings.FirstOrDefaultAsync(billing => billing.Id == id);
+        var query = _dbContext.Billings.AsQueryable();
+
+        if (user.Role != Roles.ADMIN)
+            query = query.Where(billing => billing.UserId == user.Id);
+
+        return await query.FirstOrDefaultAsync(billing => billing.Id == id);
     }
 
     public void Update(Billing billing)
@@ -103,20 +109,21 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         _dbContext.Billings.Update(billing);
     }
 
-    public async Task<bool> Exists(string barberName, string clientName, string serviceName, DateTime serviceDate)
+    public async Task<bool> Exists(Guid userId, string clientName, string serviceName, DateTime serviceDate)
     {
         var dateOnly = serviceDate.Date;
 
         return await _dbContext.Billings.AnyAsync(b =>
-            b.BarberName.ToLower() == barberName.ToLower() &&
-            b.ClientName.ToLower() == clientName.ToLower() &&
-            b.ServiceName.ToLower() == serviceName.ToLower() &&
-            b.ServiceDate.Date == dateOnly);
+        b.UserId == userId &&
+        b.ClientName.ToLower() == clientName.ToLower() &&
+        b.ServiceName.ToLower() == serviceName.ToLower() &&
+        b.ServiceDate.Date == dateOnly);
     }
 
     public async Task<List<Billing>> FilterByWeek(DateTime startDate, DateTime endDate)
     {
         return await _dbContext.Billings
+            .Include(b => b.User)
             .AsNoTracking()
             .Where(b => b.ServiceDate >= startDate && b.ServiceDate <= endDate && b.Status == PaymentStatus.Paid)
             .OrderBy(b => b.ServiceDate)

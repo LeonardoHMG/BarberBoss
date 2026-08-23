@@ -57,7 +57,7 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
             rowDetailsA.Height = HEIGHT_ROW_BILLING_TABLE;
 
             rowDetailsA.Cells[0].AddParagraph($"Método de pagamento: {billing.PaymentMethod.ConvertPaymentMethod()}");
-            rowDetailsA.Cells[1].AddParagraph($"Barbeiro: {billing.BarberName}");
+            rowDetailsA.Cells[1].AddParagraph($"Barbeiro: {billing.User.Name}");
             rowDetailsA.Cells[1].Format.Font.Bold = true;
 
             SetStyleBaseForBillingInformation(rowDetailsA.Cells[0]);
@@ -167,7 +167,7 @@ public class GenerateBillingsReportPdfUseCase : IGenerateBillingsReportPdfUseCas
 
         paragraph.AddLineBreak();
 
-        paragraph.AddFormattedText($"{CURRENCY_SYMBOL} {totalBillings}", new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 50 });
+        paragraph.AddFormattedText($"{CURRENCY_SYMBOL} {totalBillings:N2}", new Font { Name = FontHelper.BEBASNEUE_REGULAR, Size = 50 });
     }
 
     private Table CreateBillingTable(Section page)

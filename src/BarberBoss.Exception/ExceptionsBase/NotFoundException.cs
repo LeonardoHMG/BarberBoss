@@ -10,7 +10,7 @@ public class NotFoundException : BarberBossException
 
     public override int StatusCode => (int)HttpStatusCode.NotFound;
 
-    public override List<string> GetErros()
+    public override List<string> GetErrors()
     {
         return [Message];
     }
