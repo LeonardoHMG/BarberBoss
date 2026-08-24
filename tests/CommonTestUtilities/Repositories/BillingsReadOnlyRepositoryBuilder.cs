@@ -37,6 +37,15 @@ public class BillingsReadOnlyRepositoryBuilder
         return this;
     }
 
+    public BillingsReadOnlyRepositoryBuilder FilterByWeek(List<Billing> billings)
+    {
+        _repository
+            .Setup(repo => repo.FilterByWeek(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(billings);
+
+        return this;
+    }
+
     public Mock<IBillingsReadOnlyRepository> MockRepository => _repository;
 
     public IBillingsReadOnlyRepository Build() => _repository.Object;

@@ -31,9 +31,13 @@ public static class HttpClientAuthExtensions
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
-    public static async Task<Guid> RegisterBillingAsync(this HttpClient httpClient, string serviceName, string route = "api/Billings")
+    public static async Task<Guid> RegisterBillingAsync(
+        this HttpClient httpClient,
+        string serviceName,
+        DateTime? serviceDate = null,
+        string route = "api/Billings")
     {
-        var request = RequestBillingJsonBuilder.Build(serviceName);
+        var request = RequestBillingJsonBuilder.Build(serviceName, serviceDate: serviceDate);
         var result = await httpClient.PostAsJsonAsync(route, request);
 
         var body = await result.Content.ReadAsStreamAsync();
