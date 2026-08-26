@@ -1,4 +1,5 @@
-﻿using BarberBoss.Application.UseCases.Users.Register;
+﻿using BarberBoss.Application.UseCases.Users.Profile;
+using BarberBoss.Application.UseCases.Users.Register;
 using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Enums;
@@ -22,5 +23,15 @@ public class UsersController : ControllerBase
         var response = await useCase.Execute(request);
 
         return Created(string.Empty, response);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(ResponseUserProfileJson), StatusCodes.Status200OK)]
+    [Authorize]
+    public async Task<IActionResult> GetProfile([FromServices] IGetUserProfileUseCase useCase)
+    {
+        var response = await useCase.Execute();
+
+        return Ok(response);
     }
 }
