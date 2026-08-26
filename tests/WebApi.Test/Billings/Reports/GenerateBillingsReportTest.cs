@@ -31,7 +31,7 @@ public class GenerateBillingsReportTest : IClassFixture<CustomWebApplicationFact
     {
         await _httpClient.AuthenticateAsync(_emailBarber, _passwordBarber);
 
-        await _httpClient.RegisterBillingAsync("beard", DateTime.Now.Date.AddHours(10));
+        await _httpClient.RegisterBillingAsync("hair", DateTime.Now.AddMinutes(-5));
 
         await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
 
@@ -49,7 +49,7 @@ public class GenerateBillingsReportTest : IClassFixture<CustomWebApplicationFact
     {
         await _httpClient.AuthenticateAsync(_emailBarber, _passwordBarber);
 
-        await _httpClient.RegisterBillingAsync("hair", DateTime.Now.Date.AddHours(10));
+        await _httpClient.RegisterBillingAsync("hair", DateTime.Now.AddMinutes(-5));
 
         await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
 

@@ -43,6 +43,12 @@ public static class HttpClientAuthExtensions
         var body = await result.Content.ReadAsStreamAsync();
         var response = await JsonDocument.ParseAsync(body);
 
+        if (!result.IsSuccessStatusCode)
+        {
+            var raw = response.RootElement.GetRawText();
+            throw new Exception($"Failed to register billing {result.StatusCode}: {raw}");
+        }
+
         return response.RootElement.GetProperty("id").GetGuid();
     }
 }
