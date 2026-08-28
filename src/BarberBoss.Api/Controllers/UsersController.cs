@@ -1,4 +1,5 @@
-﻿using BarberBoss.Application.UseCases.Users.Profile;
+﻿using BarberBoss.Application.UseCases.Users.ChangePassword;
+using BarberBoss.Application.UseCases.Users.Profile;
 using BarberBoss.Application.UseCases.Users.Register;
 using BarberBoss.Application.UseCases.Users.Update;
 using BarberBoss.Communication.Requests;
@@ -43,6 +44,19 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> UpdateProfile(
         [FromServices] IUpdateUserUseCase useCase,
         [FromBody] RequestUpdateUserJson request)
+    {
+        await useCase.Execute(request);
+
+        return NoContent();
+    }
+
+    [HttpPut("change-password")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ChangePassword(
+        [FromServices] IChangePasswordUseCase useCase,
+        [FromBody] RequestChangePasswordJson request)
     {
         await useCase.Execute(request);
 

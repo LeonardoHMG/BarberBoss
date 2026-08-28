@@ -32,7 +32,7 @@ public class DoLoginUseCase : IDoLoginUseCase
             throw new InvalidLoginException();
         }
 
-        var passwordMatch = _passwordEncripter.Verfiy(request.Password, user.PasswordHash);
+        var passwordMatch = _passwordEncripter.Verify(request.Password, user.PasswordHash);
 
         if (passwordMatch == false)
         {
