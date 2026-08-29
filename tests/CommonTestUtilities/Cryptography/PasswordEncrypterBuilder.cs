@@ -18,7 +18,7 @@ public class PasswordEncrypterBuilder
     {
         if (string.IsNullOrWhiteSpace(password) == false)
         {
-            _mock.Setup(passwordEncrypter => passwordEncrypter.Verfiy(password, It.IsAny<string>())).Returns(true);
+            _mock.Setup(passwordEncrypter => passwordEncrypter.Verify(password, It.IsAny<string>())).Returns(true);
         }
 
         return this;

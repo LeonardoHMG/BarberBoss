@@ -45,15 +45,13 @@ public class ChangePasswordUseCase : IChangePasswordUseCase
     private void Validate(RequestChangePasswordJson request, Domain.Entities.User loggedUser)
     {
         var validator = new ChangePasswordValidator();
-
         var result = validator.Validate(request);
 
-        var passwordMatch = _passwordEncripter.Verify(request.Password, loggedUser.PasswordHash);
-
-        if (passwordMatch == false)
+        if (result.IsValid && _passwordEncripter.Verify(request.Password, loggedUser.PasswordHash) == false)
         {
             result.Errors.Add(new ValidationFailure(string.Empty, ResourceErrorMessages.PASSWORD_DIFFERENT_CURRENT_PASSWORD));
         }
+
 
         if (result.IsValid == false)
         {
