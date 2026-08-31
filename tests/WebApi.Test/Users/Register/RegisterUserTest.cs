@@ -47,6 +47,42 @@ public class RegisterUserTest : IClassFixture<CustomWebApplicationFactory>
         response.RootElement.GetProperty("token").GetString().ShouldNotBeNullOrEmpty();
     }
 
+    //[Fact]
+    //public async Task Success_Register_Reuses_Email_From_Deactivated_User()
+    //{
+    //    await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
+
+    //    var newUserRequest = RequestRegisterUserJsonBuilder.Build();
+    //    var registerResult = await _httpClient.PostAsJsonAsync("api/Users", newUserRequest);
+
+    //    var registerBody = await registerResult.Content.ReadAsStreamAsync();
+    //    var registerResponse = await JsonDocument.ParseAsync(registerBody);
+
+    //    var newUserId = registerResponse.RootElement.GetProperty("id").GetGuid();
+
+    //    await _httpClient.AuthenticateAsync(newUserRequest.Email, newUserRequest.Password);
+    //    await _httpClient.RegisterBillingAsync("force deactivation");
+
+    //    await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
+
+    //    var deleteResult = await _httpClient.DeleteAsync($"api/Users/{newUserId}");
+    //    deleteResult.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+    //    var loginResult = await _httpClient.PostAsJsonAsync("api/Login", new RequestLoginJson
+    //    {
+    //        Email = newUserRequest.Email,
+    //        Password = newUserRequest.Password
+    //    });
+
+    //    loginResult.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+
+    //    var reusedEmailRequest = RequestRegisterUserJsonBuilder.Build();
+    //    reusedEmailRequest.Email = newUserRequest.Email;
+
+    //    var newRegisterResult = await _httpClient.PostAsJsonAsync("api/Users", reusedEmailRequest);
+    //    newRegisterResult.StatusCode.ShouldBe(HttpStatusCode.Created);
+    //}
+
     [Fact]
     public async Task Error_Barber_Cannot_Register()
     {

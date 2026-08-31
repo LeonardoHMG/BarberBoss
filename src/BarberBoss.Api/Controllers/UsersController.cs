@@ -1,4 +1,5 @@
 ﻿using BarberBoss.Application.UseCases.Users.ChangePassword;
+using BarberBoss.Application.UseCases.Users.Delete;
 using BarberBoss.Application.UseCases.Users.Profile;
 using BarberBoss.Application.UseCases.Users.Register;
 using BarberBoss.Application.UseCases.Users.Update;
@@ -59,6 +60,20 @@ public class UsersController : ControllerBase
         [FromBody] RequestChangePasswordJson request)
     {
         await useCase.Execute(request);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = Roles.ADMIN)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(
+        [FromServices] IDeleteUserAccountUseCase useCase,
+        [FromRoute] Guid id)
+    {
+        await useCase.Execute(id);
 
         return NoContent();
     }

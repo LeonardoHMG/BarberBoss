@@ -129,4 +129,9 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
             .OrderBy(b => b.ServiceDate)
             .ToListAsync();
     }
+
+    public async Task<bool> HasAnyBillingForUser(Guid userId)
+    {
+        return await _dbContext.Billings.AnyAsync(b => b.UserId == userId);
+    }
 }
