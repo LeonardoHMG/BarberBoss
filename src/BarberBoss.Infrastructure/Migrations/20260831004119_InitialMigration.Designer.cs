@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarberBoss.Infrastructure.Migrations
 {
     [DbContext(typeof(BarberBossDbContext))]
-    [Migration("20260801175648_InitialMigration")]
+    [Migration("20260831004119_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -83,6 +83,9 @@ namespace BarberBoss.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -100,7 +103,7 @@ namespace BarberBoss.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("BarberBoss.Domain.Entities.Billing", b =>

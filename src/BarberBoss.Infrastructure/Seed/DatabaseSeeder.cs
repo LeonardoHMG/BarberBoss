@@ -21,14 +21,12 @@ public static class DatabaseSeeder
 
         var adminPassword = configuration.GetValue<string>("Settings:AdminSeed:Password")
             ?? throw new InvalidOperationException("Senha do admin inicial não configurada.");
-
-        var admin = new User
-        {
-            Name = "Admin",
-            Email = "admin@barberboss.com",
-            PasswordHash = passwordEncripter.Encrypt(adminPassword),
-            Role = Roles.ADMIN
-        };
+        
+        var admin = User.RegisterAdmin(
+            name: "Admin",
+            email: "admin@barberboss.com",
+            passwordHash: passwordEncripter.Encrypt(adminPassword)
+        );
 
         dbContext.Users.Add(admin);
         await dbContext.SaveChangesAsync();

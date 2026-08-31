@@ -27,6 +27,7 @@ namespace BarberBoss.Infrastructure.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Role = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -59,7 +60,7 @@ namespace BarberBoss.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Billings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Billings_User_UserId",
+                        name: "FK_Billings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",

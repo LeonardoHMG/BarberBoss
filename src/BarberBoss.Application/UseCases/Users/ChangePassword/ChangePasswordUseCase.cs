@@ -35,7 +35,9 @@ public class ChangePasswordUseCase : IChangePasswordUseCase
         Validate(request, loggedUser);
 
         var user = await _repository.GetById(loggedUser.Id);
-        user.PasswordHash = _passwordEncripter.Encrypt(request.NewPassword);
+
+        var newPasswordHash = _passwordEncripter.Encrypt(request.NewPassword);
+        user.ChangePassword(newPasswordHash);
 
         _repository.Update(user);
 

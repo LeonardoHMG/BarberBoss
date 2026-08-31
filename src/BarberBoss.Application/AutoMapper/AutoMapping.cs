@@ -9,20 +9,8 @@ public class AutoMapping: Profile
 {
     public AutoMapping()
     {
-        RequestToEntity();
         EntityToResponse();
         RequestToFilter();
-    }
-
-    private void RequestToEntity()
-    {
-        CreateMap<RequestBillingJson, Billing>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
-
-        CreateMap<RequestRegisterUserJson, User>()
-            .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
     }
 
     private void EntityToResponse()

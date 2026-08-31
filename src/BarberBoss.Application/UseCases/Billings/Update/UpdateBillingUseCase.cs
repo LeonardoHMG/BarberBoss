@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BarberBoss.Communication.Requests;
+using BarberBoss.Domain.Enums;
 using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.Billings;
 using BarberBoss.Domain.Services.LoggedUser;
@@ -40,9 +41,15 @@ public class UpdateBillingUseCase : IUpdateBillingUseCase
             throw new NotFoundException(ResourceErrorMessages.BILLING_NOT_FOUND);
         }
 
-        _mapper.Map(request, billing);
-
-        billing.UpdatedAt = DateTime.UtcNow;
+        billing.UpdateDetails(
+              serviceDate: request.ServiceDate,
+              clientName: request.ClientName,
+              serviceName: request.ServiceName,
+              amount: request.Amount,
+              paymentMethod: (PaymentMethod)request.PaymentMethod,
+              status: (PaymentStatus)request.Status,
+              notes: request.Notes
+         );
 
         _repository.Update(billing);
 

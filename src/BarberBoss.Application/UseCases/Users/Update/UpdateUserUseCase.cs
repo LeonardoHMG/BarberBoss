@@ -1,4 +1,5 @@
 ﻿using BarberBoss.Communication.Requests;
+using BarberBoss.Domain.Entities;
 using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.User;
 using BarberBoss.Domain.Services.LoggedUser;
@@ -35,9 +36,7 @@ public class UpdateUserUseCase : IUpdateUserUseCase
 
         var user = await _repository.GetById(loggedUser.Id);
 
-        user.Name = request.Name;
-        user.Email = request.Email;
-        user.UpdatedAt = DateTime.UtcNow;
+        user.UpdateProfile(request.Name, request.Email);
 
         _repository.Update(user);
 

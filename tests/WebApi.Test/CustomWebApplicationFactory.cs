@@ -1,4 +1,5 @@
-﻿using BarberBoss.Domain.Enums;
+﻿using BarberBoss.Domain.Entities;
+using BarberBoss.Domain.Enums;
 using BarberBoss.Domain.Security.Cryptography;
 using BarberBoss.Infrastructure.DataAccess;
 using CommonTestUtilities.Entities;
@@ -38,21 +39,41 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     private void StartDatabase(BarberBossDbContext dbContext, IPasswordEncripter passwordEncripter)
     {
-        var barber = UserBuilder.Build();
-        Barber = new UserCredentials(name: barber.Name, email: barber.Email, password: barber.PasswordHash);
-        barber.PasswordHash = passwordEncripter.Encrypt(barber.PasswordHash);
-        dbContext.Users.Add(barber);
-
-        var otherBarber = UserBuilder.Build();
-        OtherBarber = new UserCredentials(otherBarber.Name, otherBarber.Email, otherBarber.PasswordHash);
-        otherBarber.PasswordHash = passwordEncripter.Encrypt(otherBarber.PasswordHash);
-        dbContext.Users.Add(otherBarber);
-
-        var admin = UserBuilder.Build(Roles.ADMIN);
-        Admin = new UserCredentials(name: admin.Name, email: admin.Email, password: admin.PasswordHash);
-        admin.PasswordHash = passwordEncripter.Encrypt(admin.PasswordHash);
-        dbContext.Users.Add(admin);
+        Barber = AddUserToDatabase(dbContext, passwordEncripter);
+        OtherBarber = AddUserToDatabase(dbContext, passwordEncripter);
+        Admin = AddUserToDatabase(dbContext, passwordEncripter, role: Roles.ADMIN);
 
         dbContext.SaveChanges();
+    }
+
+    private UserCredentials AddUserToDatabase(
+        BarberBossDbContext dbContext,
+        IPasswordEncripter passwordEncripter,
+        string role = Roles.BARBER)
+    {
+        var result = UserBuilder.Build(role);
+
+        var credentials = new UserCredentials(
+            name: result.Name,
+            email: result.Email,
+            password: result.PasswordHash
+        );
+
+        var passwordHash = passwordEncripter.Encrypt(result.PasswordHash);
+
+        User userEntity;
+
+        if (role == Roles.ADMIN)
+        {
+            userEntity = User.RegisterAdmin(result.Name, result.Email, passwordHash);
+        }
+        else
+        {
+            userEntity = User.Register(result.Name, result.Email, passwordHash);
+        }
+
+        dbContext.Users.Add(userEntity);
+
+        return credentials;
     }
 }

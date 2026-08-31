@@ -46,9 +46,17 @@ public class RegisterBillingUseCase : IRegisterBillingUseCase
 
         if (exists)
             throw new ConflictException(ResourceErrorMessages.BILLING_ALREADY_EXISTS);
-       
-        var billing = _mapper.Map<Billing>(request);
-        billing.UserId = loggedUser.Id;
+
+        var billing = Billing.Register(
+              userId: loggedUser.Id,
+              serviceDate: request.ServiceDate,
+              clientName: request.ClientName,
+              serviceName: request.ServiceName,
+              amount: request.Amount,
+              paymentMethod: (PaymentMethod)request.PaymentMethod,
+              status: (PaymentStatus)request.Status,
+              notes: request.Notes
+        );
 
         await _writeOnlyRepository.Add(billing);
 

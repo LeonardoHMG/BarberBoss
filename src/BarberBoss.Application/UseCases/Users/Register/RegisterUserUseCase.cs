@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
+using BarberBoss.Domain.Entities;
 using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.User;
 using BarberBoss.Domain.Security.Cryptography;
@@ -13,7 +14,6 @@ namespace BarberBoss.Application.UseCases.Users.Register;
 
 public class RegisterUserUseCase : IRegisterUserUseCase
 {
-    private readonly IMapper _mapper;
     private readonly IPasswordEncripter _passwordEncripter;
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
     private readonly IUserWriteOnlyRepository _userWriteOnlyRepository;
@@ -21,14 +21,12 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     private readonly IAccessTokenGenerator _tokenGenerator;
 
     public RegisterUserUseCase(
-        IMapper mapper, 
         IPasswordEncripter passwordEncripter,
         IUserReadOnlyRepository userReadOnlyRepository,
         IUserWriteOnlyRepository userWriteOnlyRepository,
         IAccessTokenGenerator tokenGenerator,
         IUnitOfWork unitOfWork)
     {
-        _mapper = mapper;
         _passwordEncripter = passwordEncripter;
         _userReadOnlyRepository = userReadOnlyRepository;
         _userWriteOnlyRepository = userWriteOnlyRepository;
@@ -40,8 +38,13 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     {
         await Validate(request);
 
-        var user = _mapper.Map<Domain.Entities.User>(request);
-        user.PasswordHash = _passwordEncripter.Encrypt(request.Password);
+        var passwordHash = _passwordEncripter.Encrypt(request.Password);
+
+        var user = User.Register(
+            name: request.Name,
+            email: request.Email,
+            passwordHash: passwordHash
+        );
 
         await _userWriteOnlyRepository.Add(user);
 

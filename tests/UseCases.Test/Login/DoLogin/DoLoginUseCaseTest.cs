@@ -34,7 +34,7 @@ public class DoLoginUseCaseTest
     {
         var user = UserBuilder.Build();
 
-        var request = RequestLoginJsonBuilder.Build();  // email gerado aleatoriamente, diferente do `user`
+        var request = RequestLoginJsonBuilder.Build(); 
 
         var useCase = CreateUseCase(user, request.Password);
 
@@ -59,6 +59,23 @@ public class DoLoginUseCaseTest
 
         var exception = await Should.ThrowAsync<InvalidLoginException>(act);
         exception.GetErrors().Count.ShouldBe(1);
+        exception.GetErrors().ShouldContain(ResourceErrorMessages.EMAIL_OR_PASSWORD_INVALID);
+    }
+
+    [Fact]
+    public async Task Error_User_Inactive()
+    {
+        var user = UserBuilder.Build();
+        user.Deactivate();
+
+        var request = RequestLoginJsonBuilder.Build();
+        request.Email = user.Email;
+
+        var useCase = CreateUseCase(user, request.Password);
+
+        var act = async () => await useCase.Execute(request);
+
+        var exception = await Should.ThrowAsync<InvalidLoginException>(act);
         exception.GetErrors().ShouldContain(ResourceErrorMessages.EMAIL_OR_PASSWORD_INVALID);
     }
 

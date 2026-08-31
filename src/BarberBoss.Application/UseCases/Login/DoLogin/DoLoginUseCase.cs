@@ -26,15 +26,8 @@ public class DoLoginUseCase : IDoLoginUseCase
     public async Task<ResponseRegisteredUserJson> Execute(RequestLoginJson request)
     {
         var user = await _repository.GetUserByEmail(request.Email);
-        
-        if (user is null)
-        {
-            throw new InvalidLoginException();
-        }
 
-        var passwordMatch = _passwordEncripter.Verify(request.Password, user.PasswordHash);
-
-        if (passwordMatch == false)
+        if (user is null || user.IsActive == false || _passwordEncripter.Verify(request.Password, user.PasswordHash) == false)
         {
             throw new InvalidLoginException();
         }
