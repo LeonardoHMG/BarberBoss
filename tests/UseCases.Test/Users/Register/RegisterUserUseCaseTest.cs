@@ -20,8 +20,8 @@ public class RegisterUserUseCaseTest
         var result = await useCase.Execute(request);
 
         result.ShouldNotBeNull();
+        result.Id.ShouldNotBe(Guid.Empty);
         result.Name.ShouldBe(request.Name);
-        result.Token.ShouldNotBeNullOrWhiteSpace();
     }
 
     [Fact]
@@ -58,7 +58,6 @@ public class RegisterUserUseCaseTest
         var unitOfWork = UnitOfWorkBuilder.Build();
         var writeRepository = UserWriteOnlyRepositoryBuilder.Build();
         var passwordEncripter = new PasswordEncrypterBuilder().Build();
-        var tokenGenerator = JwtTokenGeneratorBuilder.Build();
         var readRepository = new UserReadOnlyRepositoryBuilder();
 
         if (string.IsNullOrWhiteSpace(email) == false)
@@ -66,6 +65,6 @@ public class RegisterUserUseCaseTest
             readRepository.ExistActiveUserWithEmail(email);
         }
 
-        return new RegisterUserUseCase(passwordEncripter, readRepository.Build(), writeRepository, tokenGenerator, unitOfWork);
+        return new RegisterUserUseCase(passwordEncripter, readRepository.Build(), writeRepository, unitOfWork);
     }
 }

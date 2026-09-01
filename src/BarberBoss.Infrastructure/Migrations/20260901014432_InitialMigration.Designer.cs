@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarberBoss.Infrastructure.Migrations
 {
     [DbContext(typeof(BarberBossDbContext))]
-    [Migration("20260831004119_InitialMigration")]
+    [Migration("20260901014432_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />

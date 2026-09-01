@@ -1,4 +1,5 @@
-﻿using BarberBoss.Exception;
+﻿using BarberBoss.Communication.Requests;
+using BarberBoss.Exception;
 using CommonTestUtilities.Requests;
 using Shouldly;
 using System.Net;
@@ -42,46 +43,45 @@ public class RegisterUserTest : IClassFixture<CustomWebApplicationFactory>
 
         var response = await JsonDocument.ParseAsync(body);
 
+        response.RootElement.GetProperty("id").GetGuid().ShouldNotBe(Guid.Empty);
         response.RootElement.GetProperty("name").GetString().ShouldBe(request.Name);
-
-        response.RootElement.GetProperty("token").GetString().ShouldNotBeNullOrEmpty();
     }
 
-    //[Fact]
-    //public async Task Success_Register_Reuses_Email_From_Deactivated_User()
-    //{
-    //    await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
+    [Fact]
+    public async Task Success_Register_Reuses_Email_From_Deactivated_User()
+    {
+        await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
 
-    //    var newUserRequest = RequestRegisterUserJsonBuilder.Build();
-    //    var registerResult = await _httpClient.PostAsJsonAsync("api/Users", newUserRequest);
+        var newUserRequest = RequestRegisterUserJsonBuilder.Build();
+        var registerResult = await _httpClient.PostAsJsonAsync("api/Users", newUserRequest);
 
-    //    var registerBody = await registerResult.Content.ReadAsStreamAsync();
-    //    var registerResponse = await JsonDocument.ParseAsync(registerBody);
+        var registerBody = await registerResult.Content.ReadAsStreamAsync();
+        var registerResponse = await JsonDocument.ParseAsync(registerBody);
 
-    //    var newUserId = registerResponse.RootElement.GetProperty("id").GetGuid();
+        var newUserId = registerResponse.RootElement.GetProperty("id").GetGuid();
 
-    //    await _httpClient.AuthenticateAsync(newUserRequest.Email, newUserRequest.Password);
-    //    await _httpClient.RegisterBillingAsync("force deactivation");
+        await _httpClient.AuthenticateAsync(newUserRequest.Email, newUserRequest.Password);
+        await _httpClient.RegisterBillingAsync("hair and eyebrow");
 
-    //    await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
+        await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
 
-    //    var deleteResult = await _httpClient.DeleteAsync($"api/Users/{newUserId}");
-    //    deleteResult.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        var deleteResult = await _httpClient.DeleteAsync($"api/Users/{newUserId}");
+        deleteResult.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
-    //    var loginResult = await _httpClient.PostAsJsonAsync("api/Login", new RequestLoginJson
-    //    {
-    //        Email = newUserRequest.Email,
-    //        Password = newUserRequest.Password
-    //    });
+        var loginResult = await _httpClient.PostAsJsonAsync("api/Login", new RequestLoginJson
+        {
+            Email = newUserRequest.Email,
+            Password = newUserRequest.Password
+        });
 
-    //    loginResult.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        loginResult.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 
-    //    var reusedEmailRequest = RequestRegisterUserJsonBuilder.Build();
-    //    reusedEmailRequest.Email = newUserRequest.Email;
+        var reusedEmailRequest = RequestRegisterUserJsonBuilder.Build();
+        reusedEmailRequest.Email = newUserRequest.Email;
 
-    //    var newRegisterResult = await _httpClient.PostAsJsonAsync("api/Users", reusedEmailRequest);
-    //    newRegisterResult.StatusCode.ShouldBe(HttpStatusCode.Created);
-    //}
+        var newRegisterResult = await _httpClient.PostAsJsonAsync("api/Users", reusedEmailRequest);
+        newRegisterResult.StatusCode.ShouldBe(HttpStatusCode.Created);
+    }
 
     [Fact]
     public async Task Error_Barber_Cannot_Register()

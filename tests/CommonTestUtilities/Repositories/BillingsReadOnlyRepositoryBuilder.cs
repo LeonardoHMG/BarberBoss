@@ -46,6 +46,12 @@ public class BillingsReadOnlyRepositoryBuilder
         return this;
     }
 
+    public BillingsReadOnlyRepositoryBuilder HasAnyBillingForUser(bool result)
+    {
+        _repository.Setup(repo => repo.HasAnyBillingForUser(It.IsAny<Guid>())).ReturnsAsync(result);
+        return this;
+    }
+
     public Mock<IBillingsReadOnlyRepository> MockRepository => _repository;
 
     public IBillingsReadOnlyRepository Build() => _repository.Object;

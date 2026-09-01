@@ -18,19 +18,16 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
     private readonly IUserWriteOnlyRepository _userWriteOnlyRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IAccessTokenGenerator _tokenGenerator;
 
     public RegisterUserUseCase(
         IPasswordEncripter passwordEncripter,
         IUserReadOnlyRepository userReadOnlyRepository,
         IUserWriteOnlyRepository userWriteOnlyRepository,
-        IAccessTokenGenerator tokenGenerator,
         IUnitOfWork unitOfWork)
     {
         _passwordEncripter = passwordEncripter;
         _userReadOnlyRepository = userReadOnlyRepository;
         _userWriteOnlyRepository = userWriteOnlyRepository;
-        _tokenGenerator = tokenGenerator;
         _unitOfWork = unitOfWork;
     }
 
@@ -52,8 +49,8 @@ public class RegisterUserUseCase : IRegisterUserUseCase
 
         return new ResponseRegisteredUserJson
         {
-            Name = user.Name,
-            Token = _tokenGenerator.Generate(user)
+            Id = user.Id,
+            Name = user.Name
         };
     }
 
