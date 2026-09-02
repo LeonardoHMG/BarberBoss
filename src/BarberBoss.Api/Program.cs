@@ -2,9 +2,7 @@ using BarberBoss.Api.Authentication;
 using BarberBoss.Api.Filters;
 using BarberBoss.Api.Token;
 using BarberBoss.Application;
-using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Security.Tokens;
-using BarberBoss.Exception;
 using BarberBoss.Infrastructure;
 using BarberBoss.Infrastructure.Extensions;
 using BarberBoss.Infrastructure.Migrations;
@@ -13,13 +11,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
