@@ -2,10 +2,8 @@
 using BarberBoss.Exception;
 using BarberBoss.Exception.ExceptionsBase;
 using CommonTestUtilities.Cryptography;
-using CommonTestUtilities.Mapper;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Requests;
-using CommonTestUtilities.Token;
 using Shouldly;
 
 namespace UseCases.Test.Users.Register;
@@ -48,7 +46,7 @@ public class RegisterUserUseCaseTest
 
         var act = async () => await useCase.Execute(request);
 
-        var exception = await Should.ThrowAsync<ErrorOnValidationException>(act);
+        var exception = await Should.ThrowAsync<ConflictException>(act);
         exception.GetErrors().Count.ShouldBe(1);
         exception.GetErrors().ShouldContain(ResourceErrorMessages.EMAIL_ALREADY_REGISTERED);
     }

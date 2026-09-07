@@ -54,7 +54,7 @@ public class UpdateUserUseCaseTest
 
         var act = async () => await useCase.Execute(request);
 
-        var exception = await Should.ThrowAsync<ErrorOnValidationException>(act);
+        var exception = await Should.ThrowAsync<ConflictException>(act);
         exception.GetErrors().Count.ShouldBe(1);
         exception.GetErrors().ShouldContain(ResourceErrorMessages.EMAIL_ALREADY_REGISTERED);
 

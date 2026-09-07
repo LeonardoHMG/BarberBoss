@@ -73,7 +73,7 @@ public class UpdateUserTest: IClassFixture<CustomWebApplicationFactory>
 
         var result = await _httpClient.PutAsJsonAsync(METHOD, request);
 
-        result.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        result.StatusCode.ShouldBe(HttpStatusCode.Conflict);
 
         var body = await result.Content.ReadAsStreamAsync();
         var response = await JsonDocument.ParseAsync(body);

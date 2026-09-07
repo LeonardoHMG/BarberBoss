@@ -58,19 +58,19 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     {
         var result = new RegisterUserValidator().Validate(request);
 
-        var emailExist = await _userReadOnlyRepository.ExistActiveUserWithEmail(request.Email);
-
-        if (emailExist)
-        {
-            result.Errors.Add(new ValidationFailure(string.Empty, ResourceErrorMessages.EMAIL_ALREADY_REGISTERED));
-        }
-        
-        
         if (result.IsValid == false)
         {
             var errorMessages = result.Errors.Select(f => f.ErrorMessage).ToList();
 
             throw new ErrorOnValidationException(errorMessages);
         }
+
+        var emailExist = await _userReadOnlyRepository.ExistActiveUserWithEmail(request.Email);
+
+        if (emailExist)
+        {
+            throw new ConflictException(ResourceErrorMessages.EMAIL_ALREADY_REGISTERED);
+        }
+        
     }
 }

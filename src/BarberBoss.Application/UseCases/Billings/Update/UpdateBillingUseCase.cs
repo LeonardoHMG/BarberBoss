@@ -14,17 +14,20 @@ public class UpdateBillingUseCase : IUpdateBillingUseCase
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBillingsUpdateOnlyRepository _repository;
+    private readonly IBillingsReadOnlyRepository _readRepository;
     private readonly ILoggedUser _loggedUser;
 
     public UpdateBillingUseCase(
         IMapper mapper, 
         IUnitOfWork unitOfWork, 
         IBillingsUpdateOnlyRepository repository,
+        IBillingsReadOnlyRepository readRepository,
         ILoggedUser loggedUser)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _repository = repository;
+        _readRepository = readRepository;
         _loggedUser = loggedUser;
     }
 
@@ -37,9 +40,14 @@ public class UpdateBillingUseCase : IUpdateBillingUseCase
         var billing = await _repository.GetById(loggedUser, id);
 
         if (billing is null)
-        {
             throw new NotFoundException(ResourceErrorMessages.BILLING_NOT_FOUND);
-        }
+        
+        var duplicateExists = await _readRepository.Exists(
+            loggedUser.Id, request.ClientName, request.ServiceName, request.ServiceDate, excludeId: id);
+
+        if (duplicateExists)
+            throw new ConflictException(ResourceErrorMessages.BILLING_ALREADY_EXISTS);
+
 
         billing.UpdateDetails(
               serviceDate: request.ServiceDate,

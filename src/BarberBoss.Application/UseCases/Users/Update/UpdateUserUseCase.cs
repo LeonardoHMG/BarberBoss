@@ -45,22 +45,23 @@ public class UpdateUserUseCase : IUpdateUserUseCase
 
     private async Task Validate(RequestUpdateUserJson request, string currentEmail)
     {
-        var validator = new UpdateUserValidator();
-
-        var result = validator.Validate(request);
-
-        if (currentEmail.Equals(request.Email) == false)
-        {
-            var userExist = await _userReadOnlyRepository.ExistActiveUserWithEmail(request.Email);
-            if (userExist)
-                result.Errors.Add(new ValidationFailure(string.Empty, ResourceErrorMessages.EMAIL_ALREADY_REGISTERED));
-        }
+        var result = new UpdateUserValidator().Validate(request);
 
         if (result.IsValid == false)
         {
             var errorMessages = result.Errors.Select(error => error.ErrorMessage).ToList();
 
             throw new ErrorOnValidationException(errorMessages);
+        }
+
+        if (currentEmail.Equals(request.Email) == false)
+        {
+            var userExist = await _userReadOnlyRepository.ExistActiveUserWithEmail(request.Email);
+
+            if (userExist)
+            {
+                throw new ConflictException(ResourceErrorMessages.EMAIL_ALREADY_REGISTERED);
+            }
         }
     }
 }

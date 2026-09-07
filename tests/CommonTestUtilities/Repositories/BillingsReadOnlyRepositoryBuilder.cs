@@ -15,7 +15,7 @@ public class BillingsReadOnlyRepositoryBuilder
     public BillingsReadOnlyRepositoryBuilder Exists(bool result)
     {
         _repository
-            .Setup(repo => repo.Exists(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+            .Setup(repo => repo.Exists(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<Guid?>()))
             .ReturnsAsync(result);
 
         return this;
