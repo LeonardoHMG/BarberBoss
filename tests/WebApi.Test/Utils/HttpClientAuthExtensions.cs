@@ -51,4 +51,27 @@ public static class HttpClientAuthExtensions
 
         return response.RootElement.GetProperty("id").GetGuid();
     }
+
+    public static async Task<Guid> RegisterUserAsync(
+        this HttpClient httpClient,
+        string adminEmail,
+        string adminPassword,
+        string route = "api/Users")
+    {
+        await httpClient.AuthenticateAsync(adminEmail, adminPassword);
+
+        var request = RequestRegisterUserJsonBuilder.Build();
+        var result = await httpClient.PostAsJsonAsync(route, request);
+
+        var body = await result.Content.ReadAsStreamAsync();
+        var response = await JsonDocument.ParseAsync(body);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            var raw = response.RootElement.GetRawText();
+            throw new Exception($"Failed to register user {result.StatusCode}: {raw}");
+        }
+
+        return response.RootElement.GetProperty("id").GetGuid();
+    }
 }

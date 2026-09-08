@@ -29,9 +29,8 @@ public class DeleteUserTest : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task Success_Hard_Deletes_User_Without_Billings()
     {
-        var userId = await CreateUserAndGetId();
+        var userId = await _httpClient.RegisterUserAsync(_emailAdmin, _passwordAdmin);
 
-        await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
 
         var result = await _httpClient.DeleteAsync($"{METHOD}/{userId}");
 
@@ -135,19 +134,6 @@ public class DeleteUserTest : IClassFixture<CustomWebApplicationFactory>
 
         var newRegisterResult = await _httpClient.PostAsJsonAsync(METHOD, reusedEmailRequest);
         newRegisterResult.StatusCode.ShouldBe(HttpStatusCode.Created);
-    }
-
-    private async Task<Guid> CreateUserAndGetId()
-    {
-        await _httpClient.AuthenticateAsync(_emailAdmin, _passwordAdmin);
-
-        var request = RequestRegisterUserJsonBuilder.Build();
-        var result = await _httpClient.PostAsJsonAsync(METHOD, request);
-
-        var body = await result.Content.ReadAsStreamAsync();
-        var response = await JsonDocument.ParseAsync(body);
-
-        return response.RootElement.GetProperty("id").GetGuid();
     }
 
     private async Task<(Guid Id, string Email, string Password)> CreateUserWithBillingAndGetCredentials()

@@ -9,16 +9,13 @@ namespace BarberBoss.Application.UseCases.Users.GetById;
 public class GetUserByIdUseCase : IGetUserByIdUseCase
 {
     private readonly IUserReadOnlyRepository _repository;
-    private readonly ILoggedUser _loggedUser;
     private readonly IMapper _mapper;
 
     public GetUserByIdUseCase(
         IUserReadOnlyRepository repository,
-        ILoggedUser loggedUser,
         IMapper mapper)
     {
         _repository = repository;
-        _loggedUser = loggedUser;
         _mapper = mapper;
     }
 
