@@ -52,5 +52,7 @@ public static class ResourceErrorMessages
     public const string CANNOT_DELETE_OWN_ACCOUNT = "Você não pode excluir a própria conta.";
     public const string USER_NOT_FOUND = "Usuário não encontrado.";
 
+    public const string ONLY_ADMINS_CAN_ACCESS = "Apenas administradores têm permissão para acessar este recurso.";
+
     public const string UNKNOWN_ERROR = "Ocorreu um erro desconhecido. Por favor, tente novamente mais tarde.";
 }

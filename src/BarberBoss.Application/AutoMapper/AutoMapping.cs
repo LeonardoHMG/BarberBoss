@@ -24,6 +24,8 @@ public class AutoMapping: Profile
         .ForMember(dest => dest.BarberName, opt => opt.MapFrom(src => src.User.Name));
 
         CreateMap<User, ResponseUserProfileJson>();
+
+        CreateMap<User, ResponseUserJson>();
     }
 
     private void RequestToFilter()

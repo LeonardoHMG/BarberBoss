@@ -1,5 +1,6 @@
 ﻿using BarberBoss.Application.UseCases.Users.ChangePassword;
 using BarberBoss.Application.UseCases.Users.Delete;
+using BarberBoss.Application.UseCases.Users.GetById;
 using BarberBoss.Application.UseCases.Users.Profile;
 using BarberBoss.Application.UseCases.Users.Register;
 using BarberBoss.Application.UseCases.Users.Update;
@@ -34,6 +35,22 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetProfile([FromServices] IGetUserProfileUseCase useCase)
     {
         var response = await useCase.Execute();
+
+        return Ok(response);
+    }
+
+
+    [HttpGet]
+    [Route("{id}")]
+    [Authorize(Roles = Roles.ADMIN)]
+    [ProducesResponseType(typeof(ResponseUserJson), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(
+        [FromServices] IGetUserByIdUseCase useCase,
+        [FromRoute] Guid id)
+    {
+        var response = await useCase.Execute(id);
 
         return Ok(response);
     }
