@@ -47,6 +47,15 @@ public class User
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void UpdateByAdmin(string name, string email, string role, bool isActive)
+    {
+        Name = name;
+        Email = email;
+        Role = role;
+        IsActive = isActive;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void ChangePassword(string newPasswordHash)
     {
         PasswordHash = newPasswordHash;

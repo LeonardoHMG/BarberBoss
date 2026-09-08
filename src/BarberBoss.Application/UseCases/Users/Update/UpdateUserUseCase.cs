@@ -34,7 +34,7 @@ public class UpdateUserUseCase : IUpdateUserUseCase
 
         await Validate(request, loggedUser.Email);
 
-        var user = await _repository.GetById(loggedUser.Id);
+        var user = (await _repository.GetById(loggedUser.Id))!;
 
         user.UpdateProfile(request.Name, request.Email);
 

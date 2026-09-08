@@ -54,5 +54,7 @@ public static class ResourceErrorMessages
 
     public const string ONLY_ADMINS_CAN_ACCESS = "Apenas administradores têm permissão para acessar este recurso.";
 
+    public const string INVALID_ROLE = "O nível de acesso (Role) informado é inválido.";
+
     public const string UNKNOWN_ERROR = "Ocorreu um erro desconhecido. Por favor, tente novamente mais tarde.";
 }

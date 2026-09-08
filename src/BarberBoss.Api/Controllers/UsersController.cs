@@ -4,6 +4,7 @@ using BarberBoss.Application.UseCases.Users.GetById;
 using BarberBoss.Application.UseCases.Users.Profile;
 using BarberBoss.Application.UseCases.Users.Register;
 using BarberBoss.Application.UseCases.Users.Update;
+using BarberBoss.Application.UseCases.Users.UpdateById;
 using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
 using BarberBoss.Domain.Enums;
@@ -64,6 +65,22 @@ public class UsersController : ControllerBase
         [FromBody] RequestUpdateUserJson request)
     {
         await useCase.Execute(request);
+
+        return NoContent();
+    }
+
+    [HttpPut]
+    [Route("{id}")]
+    [Authorize(Roles = Roles.ADMIN)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateById(
+        [FromServices] IUpdateUserByIdUseCase useCase,
+        [FromRoute] Guid id,
+        [FromBody] RequestUpdateUserByAdminJson request)
+    {
+        await useCase.Execute(id, request);
 
         return NoContent();
     }

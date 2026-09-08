@@ -19,9 +19,9 @@ internal class UserRepository : IUserReadOnlyRepository, IUserWriteOnlyRepositor
         return await _dbContext.Users.AnyAsync(u => u.Email == email && u.IsActive);
     }
 
-    async Task<User> IUserUpdateOnlyRepository.GetById(Guid Id)
+    async Task<User?> IUserUpdateOnlyRepository.GetById(Guid Id)
     {
-        return await _dbContext.Users.FirstAsync(user => user.Id == Id);
+        return await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == Id);
     }
 
     async Task<User?> IUserReadOnlyRepository.GetById(Guid id)

@@ -11,20 +11,17 @@ namespace BarberBoss.Application.UseCases.Billings.Update;
 
 public class UpdateBillingUseCase : IUpdateBillingUseCase
 {
-    private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBillingsUpdateOnlyRepository _repository;
     private readonly IBillingsReadOnlyRepository _readRepository;
     private readonly ILoggedUser _loggedUser;
 
-    public UpdateBillingUseCase(
-        IMapper mapper, 
+    public UpdateBillingUseCase( 
         IUnitOfWork unitOfWork, 
         IBillingsUpdateOnlyRepository repository,
         IBillingsReadOnlyRepository readRepository,
         ILoggedUser loggedUser)
     {
-        _mapper = mapper;
         _unitOfWork = unitOfWork;
         _repository = repository;
         _readRepository = readRepository;
