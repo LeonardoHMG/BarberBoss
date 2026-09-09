@@ -4,8 +4,8 @@ using BarberBoss.Exception;
 using CommonTestUtilities.Requests;
 using Shouldly;
 
-namespace Validators.Tests.Billings.Register;
-public class RegisterBillingValidatorTests
+namespace Validators.Tests.Billings;
+public class BillingValidatorTests
 {
     [Fact]
     public void Success()

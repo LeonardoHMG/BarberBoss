@@ -23,24 +23,18 @@ public class DoLoginUseCase : IDoLoginUseCase
         _accessTokenGenerator = accessTokenGenerator;
     }
 
-    public async Task<ResponseRegisteredUserJson> Execute(RequestLoginJson request)
+    public async Task<ResponseLoggedUserJson> Execute(RequestLoginJson request)
     {
         var user = await _repository.GetUserByEmail(request.Email);
-        
-        if (user is null)
+
+        if (user is null || user.IsActive == false || _passwordEncripter.Verify(request.Password, user.PasswordHash) == false)
         {
             throw new InvalidLoginException();
         }
 
-        var passwordMatch = _passwordEncripter.Verfiy(request.Password, user.PasswordHash);
-
-        if (passwordMatch == false)
+        return new ResponseLoggedUserJson
         {
-            throw new InvalidLoginException();
-        }
-
-        return new ResponseRegisteredUserJson
-        {
+            Id = user.Id,
             Name = user.Name,
             Token = _accessTokenGenerator.Generate(user)
         };

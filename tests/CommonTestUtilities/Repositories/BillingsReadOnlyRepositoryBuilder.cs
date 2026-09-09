@@ -15,7 +15,7 @@ public class BillingsReadOnlyRepositoryBuilder
     public BillingsReadOnlyRepositoryBuilder Exists(bool result)
     {
         _repository
-            .Setup(repo => repo.Exists(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+            .Setup(repo => repo.Exists(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<Guid?>()))
             .ReturnsAsync(result);
 
         return this;
@@ -34,6 +34,21 @@ public class BillingsReadOnlyRepositoryBuilder
     {
         if (billing is not null)
             _repository.Setup(repo => repo.GetById(user,  billing.Id)).ReturnsAsync(billing);
+        return this;
+    }
+
+    public BillingsReadOnlyRepositoryBuilder FilterByWeek(List<Billing> billings)
+    {
+        _repository
+            .Setup(repo => repo.FilterByWeek(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(billings);
+
+        return this;
+    }
+
+    public BillingsReadOnlyRepositoryBuilder HasAnyBillingForUser(bool result)
+    {
+        _repository.Setup(repo => repo.HasAnyBillingForUser(It.IsAny<Guid>())).ReturnsAsync(result);
         return this;
     }
 

@@ -46,5 +46,15 @@ public static class ResourceErrorMessages
     public const string UNAUTHORIZED = "Token inválido ou não informado. Faça login novamente.";
     public const string FORBIDDEN = "Você não tem permissão para acessar este recurso.";
 
+    public const string PASSWORD_REQUIRED = "A senha é obrigatória.";
+    public const string PASSWORD_DIFFERENT_CURRENT_PASSWORD = "A senha inserida é diferente da senha atual.";
+
+    public const string CANNOT_DELETE_OWN_ACCOUNT = "Você não pode excluir a própria conta.";
+    public const string USER_NOT_FOUND = "Usuário não encontrado.";
+
+    public const string ONLY_ADMINS_CAN_ACCESS = "Apenas administradores têm permissão para acessar este recurso.";
+
+    public const string INVALID_ROLE = "O nível de acesso (Role) informado é inválido.";
+
     public const string UNKNOWN_ERROR = "Ocorreu um erro desconhecido. Por favor, tente novamente mais tarde.";
 }

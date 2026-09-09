@@ -109,15 +109,16 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
         _dbContext.Billings.Update(billing);
     }
 
-    public async Task<bool> Exists(Guid userId, string clientName, string serviceName, DateTime serviceDate)
+    public async Task<bool> Exists(Guid userId, string clientName, string serviceName, DateTime serviceDate, Guid? excludeId = null)
     {
         var dateOnly = serviceDate.Date;
 
         return await _dbContext.Billings.AnyAsync(b =>
-        b.UserId == userId &&
-        b.ClientName.ToLower() == clientName.ToLower() &&
-        b.ServiceName.ToLower() == serviceName.ToLower() &&
-        b.ServiceDate.Date == dateOnly);
+         b.UserId == userId &&
+         b.ClientName.ToLower() == clientName.ToLower() &&
+         b.ServiceName.ToLower() == serviceName.ToLower() &&
+         b.ServiceDate.Date == dateOnly &&
+         (excludeId == null || b.Id != excludeId));
     }
 
     public async Task<List<Billing>> FilterByWeek(DateTime startDate, DateTime endDate)
@@ -128,5 +129,10 @@ internal class BillingsRepository : IBillingsReadOnlyRepository, IBillingsWriteO
             .Where(b => b.ServiceDate >= startDate && b.ServiceDate <= endDate && b.Status == PaymentStatus.Paid)
             .OrderBy(b => b.ServiceDate)
             .ToListAsync();
+    }
+
+    public async Task<bool> HasAnyBillingForUser(Guid userId)
+    {
+        return await _dbContext.Billings.AnyAsync(b => b.UserId == userId);
     }
 }

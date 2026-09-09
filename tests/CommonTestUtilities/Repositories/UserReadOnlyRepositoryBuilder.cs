@@ -12,14 +12,26 @@ public class UserReadOnlyRepositoryBuilder
         _repository = new Mock<IUserReadOnlyRepository>();
     }
 
-    public void ExistActiveUserWithEmail(string email)
+    public UserReadOnlyRepositoryBuilder ExistActiveUserWithEmail(string email)
     {
-        _repository.Setup(userReadOnly => userReadOnly.ExistActiveUserWithEmail(email)).ReturnsAsync(true);
+        _repository
+            .Setup(repository => repository.ExistActiveUserWithEmail(email))
+            .ReturnsAsync(true);
+
+        return this;
     }
 
     public UserReadOnlyRepositoryBuilder GetUserByEmail(User user)
     {
         _repository.Setup(userRepository => userRepository.GetUserByEmail(user.Email)).ReturnsAsync(user);
+
+        return this;
+    }
+
+    public UserReadOnlyRepositoryBuilder GetById(User? user)
+    {
+        if (user is not null)
+            _repository.Setup(repo => repo.GetById(user.Id)).ReturnsAsync(user);
 
         return this;
     }

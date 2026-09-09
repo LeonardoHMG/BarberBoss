@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BarberBoss.Communication.Requests;
 using BarberBoss.Communication.Responses;
+using BarberBoss.Domain.Entities;
 using BarberBoss.Domain.Repositories;
 using BarberBoss.Domain.Repositories.User;
 using BarberBoss.Domain.Security.Cryptography;
@@ -13,26 +14,20 @@ namespace BarberBoss.Application.UseCases.Users.Register;
 
 public class RegisterUserUseCase : IRegisterUserUseCase
 {
-    private readonly IMapper _mapper;
     private readonly IPasswordEncripter _passwordEncripter;
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
     private readonly IUserWriteOnlyRepository _userWriteOnlyRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IAccessTokenGenerator _tokenGenerator;
 
     public RegisterUserUseCase(
-        IMapper mapper, 
         IPasswordEncripter passwordEncripter,
         IUserReadOnlyRepository userReadOnlyRepository,
         IUserWriteOnlyRepository userWriteOnlyRepository,
-        IAccessTokenGenerator tokenGenerator,
         IUnitOfWork unitOfWork)
     {
-        _mapper = mapper;
         _passwordEncripter = passwordEncripter;
         _userReadOnlyRepository = userReadOnlyRepository;
         _userWriteOnlyRepository = userWriteOnlyRepository;
-        _tokenGenerator = tokenGenerator;
         _unitOfWork = unitOfWork;
     }
 
@@ -40,8 +35,13 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     {
         await Validate(request);
 
-        var user = _mapper.Map<Domain.Entities.User>(request);
-        user.PasswordHash = _passwordEncripter.Encrypt(request.Password);
+        var passwordHash = _passwordEncripter.Encrypt(request.Password);
+
+        var user = User.Register(
+            name: request.Name,
+            email: request.Email,
+            passwordHash: passwordHash
+        );
 
         await _userWriteOnlyRepository.Add(user);
 
@@ -49,8 +49,8 @@ public class RegisterUserUseCase : IRegisterUserUseCase
 
         return new ResponseRegisteredUserJson
         {
-            Name = user.Name,
-            Token = _tokenGenerator.Generate(user)
+            Id = user.Id,
+            Name = user.Name
         };
     }
 
@@ -58,19 +58,19 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     {
         var result = new RegisterUserValidator().Validate(request);
 
-        var emailExist = await _userReadOnlyRepository.ExistActiveUserWithEmail(request.Email);
-
-        if (emailExist)
-        {
-            result.Errors.Add(new ValidationFailure(string.Empty, ResourceErrorMessages.EMAIL_ALREADY_REGISTERED));
-        }
-        
-        
         if (result.IsValid == false)
         {
             var errorMessages = result.Errors.Select(f => f.ErrorMessage).ToList();
 
             throw new ErrorOnValidationException(errorMessages);
         }
+
+        var emailExist = await _userReadOnlyRepository.ExistActiveUserWithEmail(request.Email);
+
+        if (emailExist)
+        {
+            throw new ConflictException(ResourceErrorMessages.EMAIL_ALREADY_REGISTERED);
+        }
+        
     }
 }

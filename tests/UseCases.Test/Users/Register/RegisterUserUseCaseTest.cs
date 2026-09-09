@@ -2,10 +2,8 @@
 using BarberBoss.Exception;
 using BarberBoss.Exception.ExceptionsBase;
 using CommonTestUtilities.Cryptography;
-using CommonTestUtilities.Mapper;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Requests;
-using CommonTestUtilities.Token;
 using Shouldly;
 
 namespace UseCases.Test.Users.Register;
@@ -20,8 +18,8 @@ public class RegisterUserUseCaseTest
         var result = await useCase.Execute(request);
 
         result.ShouldNotBeNull();
+        result.Id.ShouldNotBe(Guid.Empty);
         result.Name.ShouldBe(request.Name);
-        result.Token.ShouldNotBeNullOrWhiteSpace();
     }
 
     [Fact]
@@ -48,18 +46,16 @@ public class RegisterUserUseCaseTest
 
         var act = async () => await useCase.Execute(request);
 
-        var exception = await Should.ThrowAsync<ErrorOnValidationException>(act);
+        var exception = await Should.ThrowAsync<ConflictException>(act);
         exception.GetErrors().Count.ShouldBe(1);
         exception.GetErrors().ShouldContain(ResourceErrorMessages.EMAIL_ALREADY_REGISTERED);
     }
 
     private RegisterUserUseCase CreateUseCase(string? email = null)
     {
-        var mapper = MapperBuilder.Build();
         var unitOfWork = UnitOfWorkBuilder.Build();
         var writeRepository = UserWriteOnlyRepositoryBuilder.Build();
         var passwordEncripter = new PasswordEncrypterBuilder().Build();
-        var tokenGenerator = JwtTokenGeneratorBuilder.Build();
         var readRepository = new UserReadOnlyRepositoryBuilder();
 
         if (string.IsNullOrWhiteSpace(email) == false)
@@ -67,6 +63,6 @@ public class RegisterUserUseCaseTest
             readRepository.ExistActiveUserWithEmail(email);
         }
 
-        return new RegisterUserUseCase(mapper, passwordEncripter, readRepository.Build(), writeRepository, tokenGenerator, unitOfWork);
+        return new RegisterUserUseCase(passwordEncripter, readRepository.Build(), writeRepository, unitOfWork);
     }
 }

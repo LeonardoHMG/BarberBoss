@@ -82,14 +82,31 @@ public class UpdateBillingUseCaseTest
         repositoryMock.Verify(repo => repo.Update(It.IsAny<Billing>()), Times.Never);
     }
 
-    private (UpdateBillingUseCase UseCase, Mock<IBillingsUpdateOnlyRepository> RepositoryMock) CreateUseCaseWithMock(User user, Billing? billing)
+    [Fact]
+    public async Task Error_Billing_Already_Exists()
+    {
+        var loggedUser = UserBuilder.Build();
+        var billing = BillingBuilder.Build(loggedUser);
+        var request = RequestBillingJsonBuilder.Build();
+
+        var (useCase, repositoryMock) = CreateUseCaseWithMock(loggedUser, billing, duplicateExists: true);
+
+        var act = async () => await useCase.Execute(billing.Id, request);
+
+        var exception = await Should.ThrowAsync<ConflictException>(act);
+        exception.GetErrors().ShouldContain(ResourceErrorMessages.BILLING_ALREADY_EXISTS);
+
+        repositoryMock.Verify(repo => repo.Update(It.IsAny<Billing>()), Times.Never);
+    }
+
+    private (UpdateBillingUseCase UseCase, Mock<IBillingsUpdateOnlyRepository> RepositoryMock) CreateUseCaseWithMock(User user, Billing? billing, bool duplicateExists = false)
     {
         var repositoryBuilder = new BillingsUpdateOnlyRepositoryBuilder().GetById(user, billing);
-        var mapper = MapperBuilder.Build();
+        var readRepository = new BillingsReadOnlyRepositoryBuilder().Exists(duplicateExists).Build();
         var unitOfWork = UnitOfWorkBuilder.Build();
         var loggedUser = LoggedUserBuilder.Build(user);
 
-        var useCase = new UpdateBillingUseCase(mapper, unitOfWork, repositoryBuilder.Build(), loggedUser);
+        var useCase = new UpdateBillingUseCase(unitOfWork, repositoryBuilder.Build(), readRepository, loggedUser);
 
         return (useCase, repositoryBuilder.MockRepository);
     }
