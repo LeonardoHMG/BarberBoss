@@ -21,6 +21,7 @@ public class UsersController : ControllerBase
     [Authorize(Roles = Roles.ADMIN)]
     [ProducesResponseType(typeof(ResponseRegisteredUserJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register(
         [FromServices] IRegisterUserUseCase useCase,
         [FromBody] RequestRegisterUserJson request)
@@ -60,6 +61,7 @@ public class UsersController : ControllerBase
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateProfile(
         [FromServices] IUpdateUserUseCase useCase,
         [FromBody] RequestUpdateUserJson request)
@@ -75,6 +77,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateById(
         [FromServices] IUpdateUserByIdUseCase useCase,
         [FromRoute] Guid id,

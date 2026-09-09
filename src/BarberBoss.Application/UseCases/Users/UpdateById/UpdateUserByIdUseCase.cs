@@ -36,9 +36,9 @@ public class UpdateUserByIdUseCase : IUpdateUserByIdUseCase
 
         if (user.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) == false)
         {
-            var userWithSameEmail = await _readOnlyRepository.GetUserByEmail(request.Email);
+            var emailExist = await _readOnlyRepository.ExistActiveUserWithEmail(request.Email);
 
-            if (userWithSameEmail is not null && userWithSameEmail.Id != id)
+            if (emailExist)
             {
                 throw new ConflictException(ResourceErrorMessages.EMAIL_ALREADY_REGISTERED);
             }

@@ -18,6 +18,7 @@ public class BillingsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseRegisterBillingJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register(
         [FromServices] IRegisterBillingUseCase useCase,
         [FromBody] RequestBillingJson request)
@@ -70,6 +71,7 @@ public class BillingsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Update(
         [FromServices] IUpdateBillingUseCase useCase,
         [FromRoute] Guid id,

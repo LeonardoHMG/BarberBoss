@@ -103,11 +103,10 @@ public class UpdateBillingUseCaseTest
     {
         var repositoryBuilder = new BillingsUpdateOnlyRepositoryBuilder().GetById(user, billing);
         var readRepository = new BillingsReadOnlyRepositoryBuilder().Exists(duplicateExists).Build();
-        var mapper = MapperBuilder.Build();
         var unitOfWork = UnitOfWorkBuilder.Build();
         var loggedUser = LoggedUserBuilder.Build(user);
 
-        var useCase = new UpdateBillingUseCase(mapper, unitOfWork, repositoryBuilder.Build(), readRepository, loggedUser);
+        var useCase = new UpdateBillingUseCase(unitOfWork, repositoryBuilder.Build(), readRepository, loggedUser);
 
         return (useCase, repositoryBuilder.MockRepository);
     }
