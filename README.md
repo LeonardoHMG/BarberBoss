@@ -33,6 +33,87 @@ os endpoints da API de forma simplificada.
 ![badge-mysql]
 ![badge-swagger]
 
+---
+
+# Autenticação e Uso da API
+
+A API utiliza autenticação baseada em **Bearer Token (JWT)**. A maioria das rotas requer que o token gerado no Login seja enviado no cabeçalho (*Header*) da requisição:
+
+```http
+Authorization: Bearer <SEU_TOKEN_JWT>
+```
+
+Credenciais Padrão (Admin Seed)
+Para facilitar os testes iniciais, a aplicação já possui um usuário Administrador padrão semeado no banco de dados:
+
+E-mail: admin@barberboss.com
+
+Senha: BarberBoss7539!
+
+Fluxo de Autenticação e Exemplos de Requisição
+1. Registrar um Novo Usuário
+Endpoint público para criação de novas contas.
+
+POST /api/Users
+```json
+{
+  "name": "Barbeiro Silva",
+  "email": "barbeiro@barberboss.com",
+  "password": "Password@123"
+}
+```
+
+2. Autenticação (Login)
+Endpoint público para autenticação de usuários cadastrados ou do Admin padrão. Retorna o Token JWT.
+
+POST /api/Login
+
+Requisição:
+```json
+{
+  "email": "admin@barberboss.com",
+  "password": "Admin@123"
+}
+```
+Resposta de Sucesso (200 OK):
+
+```json
+{
+  "name": "Admin BarberBoss",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+3. Utilizando o Token no Swagger
+Execute a aplicação e acesse a página do Swagger.
+
+Clique no botão Authorize (localizado no canto superior direito).
+
+No campo de texto, insira o token recebido no Login com o prefixo Bearer :
+
+```plaintext
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Clique em Authorize e feche o modal. Suas requisições no Swagger agora estarão autenticadas.
+
+4. Atualizar Usuário por ID (Exemplo de Rota Protegida - Admin)
+Endpoint restrito a administradores para atualização de cadastro de usuários.
+
+PUT /api/Users/{id}
+
+Header: Authorization: Bearer <TOKEN_ADMIN>
+
+Requisição:
+
+```json
+{
+  "name": "Barbeiro Silva Atualizado",
+  "email": "barbeiro.novoemail@barberboss.com",
+  "role": "Barber",
+  "isActive": true
+}
+```
+
 # Getting Started
 
 Para obter uma cópia local funcionando, siga estes passos simples.
@@ -50,8 +131,12 @@ Para obter uma cópia local funcionando, siga estes passos simples.
     git clone https://github.com/LeonardoHMG/BarberBoss.git
     ```
 
-2. Preencha as informações no arquivo `appsettings.Development.json`.
-3. Execute a API e aproveite o seu teste :)
+2. Preencha as informações no arquivo `appsettings.Development.json` (Connection String e Chave JWT).
+3. Execute as Migrations do Entity Framework Core se necessário para criar o banco de dados:
+   ```bash
+   dotnet ef database update
+   ```
+5. Execute a API e aproveite o seu teste :)
 
 
 <!-- Links -->
